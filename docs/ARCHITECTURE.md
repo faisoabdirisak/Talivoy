@@ -89,6 +89,12 @@ Schema application adds a nullable column and preserves existing opportunity and
 
 SQLite integration checks cover reminder updates, cross-guest denial, selected snapshot disclosure, expiry, revocation and cascading deletion. Calendar tests cover UTC conversion, escaping and line folding. Component tests exercise deliberate submission and the shared snapshot view.
 
-## Proposed extensions
+## Private adviser responses and weekly check-ins
 
-Private responses from advisers on the shared review page and weekly worker check-ins remain proposed. Implementation should define response storage, worker access, self-reported adviser identity and explicit review of suggested plan changes.
+AdviserShare now stores an optional opportunityId. New links support the private response form; legacy shares keep their readable snapshot. AdviserFeedback belongs to Opportunity and optionally to AdviserShare. Removing the share sets its response shareId to null, retaining submitted responses for the worker. Deleting the opportunity cascades to its responses.
+
+The public submission route validates a current share token, expiry and opportunity association in a transaction. Request IDs make retries reuse the original response. The public route returns a submission confirmation. Private worker routes list owned responses and add an approved next step using a deterministic PlanItem ID. The response does not edit an existing milestone.
+
+WeeklyCheckIn belongs to Opportunity and stores progress notes, blockers, budget, hours and application timestamps. A deterministic check-in ID makes save retries stable. Preview loads current task/progress data through the existing session projection and calls shared refineRemainingTasks logic. The preview fingerprint includes tasks and constraints. Applying checks that fingerprint, updates unfinished descriptions and marks the entry applied in one transaction. Completed guidance and progress remain saved.
+
+The dashboard displays private response cards and check-in history for a focused live opportunity. Accepting an adviser next step and applying check-in guidance require explicit worker confirmation. Both sets of records cascade with guest-session deletion through their opportunity. Public evaluations continue in their separate publication-consented flow.

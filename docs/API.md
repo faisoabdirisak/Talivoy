@@ -71,7 +71,7 @@ Demo signals are deliberately synthetic; only new live analyses have AI-estimate
 
 Validation errors use `{ "error": "Invalid request", "details": { "field": ["message"] } }`.
 Other errors use a safe `{ "error": "..." }` message, never a raw stack or database error.
-`restart_sid` is HttpOnly, SameSite=Strict, Path=/, with a 30-day maximum age and Secure in production.
+`talivoy_sid` is HttpOnly, SameSite=Strict, Path=/, with a 30-day maximum age and Secure in production.
 Public fictional seed tokens are rejected as guest credentials. Demo progress is temporary client state.
 
 ## Job posting comparison
@@ -92,7 +92,7 @@ All endpoints in this section have the prefix `/api/support` and share a limit o
 | GET `/adviser-shares` | List the current guest's active share IDs and creation/expiry times. |
 | POST `/adviser-shares` | `opportunityId`, booleans `includeTitle`, `includeSummary`, `includeReasoning`, `includeProgress`, selected `taskIds`, and `expiresInDays` (1, 7 or 30). Return 201 with a random token and share metadata. |
 | DELETE `/adviser-shares/:id` | Revoke only a link owned by the current guest; return 204. |
-| POST `/adviser-review/read` | Public `token` in JSON. Return only the selected snapshot and expiry, or 404 for invalid, expired or revoked links. |
+| POST `/adviser-review/read` | Public `token` in JSON. Return the selected snapshot, expiry and canRespond flag, or 404 for invalid, expired or revoked links. |
 
 Share tokens contain 32 random bytes encoded as hex. Only SHA-256 hashes are stored. Browser links place the token in the URL fragment and send it in the read request body. Responses use the API's no-store policy. The snapshot contains only selected title/summary/reasoning and selected milestones with their descriptions and day/week. Completion status is omitted unless chosen. Existing copies held by recipients cannot be revoked.
 
@@ -105,4 +105,33 @@ For refinement, `constraints` contains `budget` (integer USD from 0 to 1,000,000
 
 Public evaluation input includes `opportunityId`, `name`, `role`, `affiliation`, `reviewerCode`, `fit`, `reason`, `firstStep`, `usefulness`, `reportChanges`, `friction` and `publish: true`. Optional `demoPersona` is `maria`, `james` or `aisha`. Live evaluation verifies guest ownership of the opportunity. The form bounds answers and requires publication consent. Submissions are limited to 10 per 15 minutes per IP.
 
-Public responses include source, ID, creation time, opportunity title, reviewer name/role/affiliation and answer fields. They omit the reviewer code. Reviewer identities are self-reported. Adviser responses tied to shared snapshots and weekly check-in endpoints remain proposed work.
+Public responses include source, ID, creation time, opportunity title, reviewer name/role/affiliation and answer fields. They omit the reviewer code. Reviewer identities are self-reported. Private adviser responses and check-in endpoints are described below.
+
+
+## Private adviser responses
+
+All paths below use the prefix /api/support and its shared 60-request-per-minute limit.
+
+| Method and path | Input | Access and behavior |
+| --- | --- | --- |
+| POST /adviser-review/respond | token, requestId (UUID), reviewerName, reviewerRole, practicality, assessment, milestoneSuggestion, nextStep, nextStepDetails | Public holder of a valid unexpired response-enabled link. Return 201 with submitted true. Invalid input returns 400; unavailable or revoked link returns 404. |
+| GET /adviser-feedback?opportunityId=... | Opportunity ID | Guest-owned responses with creation and acceptance timestamps. Other guests receive an empty list. |
+| POST /adviser-feedback/:id/accept | Empty JSON object | Worker ownership required. Return the added/reused PlanItem, or 404 if unavailable. |
+
+Practicality is Practical, Needs changes, or More information needed. Names and roles have a 100-character limit, the next step has a 200-character limit, and assessment, milestone suggestions and step details allow 1000 characters each. Name, role, assessment and next step are required. Suggestions and step details may be empty strings. A deterministic response ID combines the token hash and requestId so a repeated request keeps the original response.
+
+Private reads omit token, share ID and submission request ID. Acceptance uses a deterministic task ID, preserves existing progress and sets acceptedAt transactionally. The new milestone goes to Week 4, day 30. Revocation removes the share association while retaining submitted responses under their opportunity. Session deletion cascades through the opportunity to its responses.
+
+## Weekly check-ins
+
+| Method and path | Input | Access and behavior |
+| --- | --- | --- |
+| GET /check-ins?opportunityId=... | Opportunity ID | Guest-owned history ordered newest first. |
+| POST /check-ins | opportunityId, requestId (UUID), completedWork, blockers, budget, hours | Return 201 with the saved history entry. Validation errors return 400; unavailable opportunity returns 403. |
+| POST /check-ins/:id/refine | Optional revision | Preview guidance when revision is absent; apply a reviewed preview when supplied. Return original, refined and revision. Missing ownership returns 404; stale/already-applied previews return 409. |
+
+Completed work requires 1–1000 characters; blockers allow up to 1000. Budget is integer USD from 0 to 1,000,000 and weekly hours range from 0.5 to 168. Repeated save requests with the same opportunity and requestId reuse the stored record. History exposes appliedAt and omits the internal appliedRevision.
+
+Check-in adjustments reuse shared TypeScript refinement logic. A fingerprint protects the preview from concurrent task changes. Applying updates only unfinished descriptions and sets appliedAt and appliedRevision in the same transaction. Retrying the same applied revision returns current saved state. These routes record progress notes and propose time/budget guidance. Task checkboxes control actual completion.
+
+Existing guest cookies named `restart_sid` are accepted during the Talivoy rebrand. New sessions use `talivoy_sid`. Start over clears both cookie names.

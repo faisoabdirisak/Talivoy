@@ -1,4 +1,4 @@
-import type { AnalyzeRequest } from '@restart-ai/shared';
+import type { AnalyzeRequest } from '@talivoy/shared';
 
 /**
  * System prompt template for POST /api/analyze.

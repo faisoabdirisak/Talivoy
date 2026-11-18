@@ -14,7 +14,8 @@
  */
 import type { Response, Request } from 'express';
 
-export const SESSION_COOKIE = 'restart_sid';
+export const SESSION_COOKIE = 'talivoy_sid';
+const LEGACY_SESSION_COOKIE = 'restart_sid';
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export function setSessionCookie(res: Response, sessionId: string): void {
@@ -29,6 +30,7 @@ export function setSessionCookie(res: Response, sessionId: string): void {
 
 export function clearSessionCookie(res: Response): void {
   res.clearCookie(SESSION_COOKIE, { path: '/' });
+  res.clearCookie(LEGACY_SESSION_COOKIE, { path: '/' });
 }
 
 /**
@@ -36,7 +38,7 @@ export function clearSessionCookie(res: Response): void {
  * The returned value is the cookieToken (opaque), not the session ID.
  */
 export function getSessionToken(req: Request): string | null {
-  const val = req.cookies?.[SESSION_COOKIE];
+  const val = req.cookies?.[SESSION_COOKIE] ?? req.cookies?.[LEGACY_SESSION_COOKIE];
   // Public fictional seed tokens must never authorize live reads or writes.
   return typeof val === 'string' && val.length > 0 && val.length <= 256
     && !val.startsWith('demo-token-') ? val : null;

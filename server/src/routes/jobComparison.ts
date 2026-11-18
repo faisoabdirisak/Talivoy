@@ -2,7 +2,7 @@ import { createHmac, randomBytes, timingSafeEqual, createHash } from 'node:crypt
 import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
-import { JobComparisonInputSchema, JobComparisonSchema } from '@restart-ai/shared';
+import { JobComparisonInputSchema, JobComparisonSchema } from '@talivoy/shared';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { getSessionToken } from '../lib/session.js';
 import { prisma } from '../lib/db.js';

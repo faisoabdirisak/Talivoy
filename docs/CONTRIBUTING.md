@@ -37,7 +37,7 @@ Fit scores are not completion percentages; confirm the lower task progress chang
 
 SQLite integration tests cover support-feature ownership, snapshot disclosure, expiry, revocation and cascading deletion. Calendar tests cover UTC conversion, escaping and folding. Component tests cover deliberate submission, selection and the shared view.
 
-Record verification dates and scope while retaining earlier stage records as history. Private adviser responses and weekly check-ins remain proposed until implemented and verified.
+Record verification dates and scope while retaining earlier stage records as history. Private adviser responses and weekly check-ins have implemented forms, storage and worker review flows. Keep verification evidence aligned with the current schema.
 
 ## Commit examples
 
@@ -46,3 +46,14 @@ Record verification dates and scope while retaining earlier stage records as his
 
 PRs should describe the concrete change, tests run, and any data or deployment implications.
 No automatic deployment is enabled by CI. Publishing, destructive migrations, and history rewrites require explicit authorization.
+
+
+## Adviser response and check-in acceptance
+
+- Create a fresh link, open it in a separate browser and submit fictional adviser details. Check the submission confirmation and owner-only dashboard response.
+- Revoke or expire a link and confirm new responses are rejected. Previously submitted responses should remain visible to the worker.
+- Confirm acceptance requires worker review and adds one milestone even when retried.
+- Save a check-in, reload history, preview guidance and confirm applying requires review.
+- Change a task between preview and apply to verify stale-preview handling.
+- Verify completed task descriptions and timestamps remain saved after adjustments.
+- Confirm response and check-in rows disappear when their disposable guest session is deleted.

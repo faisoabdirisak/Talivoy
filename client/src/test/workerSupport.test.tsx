@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 import { AdviserReviewLink } from '../components/AdviserReviewLink';
 import { AdviserReviewPage } from '../components/AdviserReviewPage';
 import { MilestoneReminders } from '../components/MilestoneReminders';

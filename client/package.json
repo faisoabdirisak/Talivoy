@@ -1,5 +1,5 @@
 {
-  "name": "@restart-ai/client",
+  "name": "@talivoy/client",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,7 @@
     "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
-    "@restart-ai/shared": "*",
+    "@talivoy/shared": "*",
     "framer-motion": "^11.5.4",
     "lucide-react": "^0.441.0",
     "react": "^18.3.1",

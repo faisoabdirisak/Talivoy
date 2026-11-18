@@ -21,6 +21,10 @@ The initial ST-5 review was recorded on 6 November 2026. This document was exten
 | POST /api/support/adviser-review/read | Random-token hash lookup, expiry and no-store policy | Expired/revoked links denied; only chosen snapshot returned |
 | POST /api/sessions/me/refine | Guest ownership, bounded constraints and revision check | Changed plans require another preview |
 | /api/evaluations | Publication consent, bounded answers, live ownership or demo persona, submission limit | Public projection omits reviewer code; identity self-reported |
+| POST /api/support/adviser-review/respond | Current token, expiry, opportunity association, bounded fields and repeat-request identity | Returns submission confirmation without revealing other responses |
+| GET /api/support/adviser-feedback | Opportunity/session ownership and explicit response projection | Guest-private answers, no token or share ID |
+| POST /api/support/adviser-feedback/:id/accept | Worker ownership and transactional task upsert | Repeated acceptance keeps task identity and completed progress |
+| /api/support/check-ins and /check-ins/:id/refine | Owner scoping, bounded notes, repeat-request identity and revision fingerprint | Private history and explicit reviewed adjustment, with completed guidance retained |
 | Unknown /api routes | Production SPA boundary | JSON 404 instead of index.html |
 
 ## Common protections and fixes
@@ -62,3 +66,14 @@ GitHub CodeQL success means the scan completed; inspect Security alerts and anno
 
 References: [Express 4 async error handling](https://expressjs.com/en/guide/error-handling.html),
 [Vitest coverage](https://vitest.dev/guide/coverage.html).
+
+
+## Adviser response and check-in retention
+
+The adviser form describes that answers go to the worker. Names and roles are self-reported. A bearer link permits submission while valid. It does not authenticate a professional identity. The worker reviews the response before adding its suggested next step.
+
+Revocation and expiry deny new adviser submissions. Responses already submitted are retained under the worker's opportunity. They cascade with guest-session deletion. Weekly check-ins have the same opportunity/session ownership and deletion boundary. Public evaluation records remain independent.
+
+The response and check-in request IDs support safe retries. The API validates ownership again inside mutations. Check-in previews use a revision fingerprint, and applying a stale preview returns a conflict. Applying a current preview preserves completed tasks and updates unfinished guidance only.
+
+Disposable SQLite tests verify private reads, expiry/revocation rejection, response retention after revocation, replay-safe task creation, check-in history, stale-preview rejection, completion preservation and cascaded deletion.

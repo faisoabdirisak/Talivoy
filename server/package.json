@@ -1,5 +1,5 @@
 {
-  "name": "@restart-ai/server",
+  "name": "@talivoy/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@google/genai": "^2.32.0",
     "@prisma/client": "^5.19.1",
-    "@restart-ai/shared": "*",
+    "@talivoy/shared": "*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^4.21.0",

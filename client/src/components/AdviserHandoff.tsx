@@ -1,7 +1,8 @@
+import { Brand } from './Brand';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Printer, X } from 'lucide-react';
-import { calculateScoreBreakdown, type Opportunity } from '@restart-ai/shared';
+import { calculateScoreBreakdown, type Opportunity } from '@talivoy/shared';
 import { restoreSession } from '../lib/api';
 import './adviserHandoff.css';
 
@@ -111,7 +112,8 @@ function TransitionReport({ opportunity, demo }: { opportunity: Opportunity; dem
   return (
     <article className="handoff-report">
       <header>
-        <p className="handoff-kicker">ReStart AI Cloud · Adviser handoff</p>
+        <Brand />
+        <p className="handoff-kicker">Talivoy · Adviser handoff</p>
         <h1>{opportunity.title}</h1>
         <p>{categories[opportunity.category]} · 30-day transition plan</p>
         <p className="handoff-note">

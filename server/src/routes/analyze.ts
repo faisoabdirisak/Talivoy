@@ -7,7 +7,7 @@ import {
   type Opportunity,
   type PlanItem,
   type Session,
-} from '@restart-ai/shared';
+} from '@talivoy/shared';
 import { generateGraniteContent } from '../lib/granite.js';
 import { generateContent, GeminiError } from '../lib/gemini.js';
 import { computeFeasibilityScore, assignRanks } from '../lib/scoring.js';

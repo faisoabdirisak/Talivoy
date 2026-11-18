@@ -1,4 +1,4 @@
-import { type FeasibilityTier, getFeasibilityTier } from '@restart-ai/shared';
+import { type FeasibilityTier, getFeasibilityTier } from '@talivoy/shared';
 
 const TIER_COLOR: Record<FeasibilityTier, string> = {
   green: '#10B981',

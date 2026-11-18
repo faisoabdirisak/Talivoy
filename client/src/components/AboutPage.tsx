@@ -1,3 +1,4 @@
+import { Brand } from './Brand';
 import {
   ArrowRight,
   Compass,
@@ -18,12 +19,12 @@ const purpose = [
   {
     icon: Target,
     title: 'Our mission',
-    copy: 'Help people facing a career transition find a realistic next step. ReStart turns their skills, goals, available time, and budget into options they can compare and a plan they can begin.',
+    copy: 'Help people carry their experience into their next career chapter. Talivoy brings existing skills, goals, time and budget together so workers can compare practical opportunities and begin a plan.',
   },
   {
     icon: Eye,
     title: 'Our vision',
-    copy: 'Make career transition support easier to access, especially for people with limited time, money, or access to career guidance. We envision workers and advisers using a shared plan to make informed decisions together.',
+    copy: 'Make career guidance easier to access when someone moves to a new country, returns to work or changes direction. We envision workers and advisers recognizing existing strengths, identifying learning needs and choosing next steps together.',
   },
 ];
 
@@ -31,21 +32,26 @@ const journey = [
   {
     icon: Compass,
     title: 'Explore and compare',
-    copy: 'Enter a profile to receive three ranked opportunities across career changes, upskilling, or small business ideas. Compare two options by fit, estimated cost, launch time, and first task. Open the explanation to see the factors behind the score.',
+    copy: 'Upload a résumé, review its extracted details or enter a profile manually to receive three ranked opportunities across career changes, upskilling or small business ideas. Compare two options by fit, estimated cost, launch time, and first task. Open the explanation to see the factors behind the score.',
   },
   {
     icon: ListChecks,
     title: 'Choose and act',
-    copy: 'Focus on an opportunity and follow its 30-day plan. Adjust the guidance for unfinished tasks when your budget or weekly hours change. My Next Step on the Dashboard shows the first unfinished task and opens it in the plan.',
+    copy: 'Choose an opportunity and follow its 30-day plan. Compare your skills with a job posting, save reminders and record weekly check-ins. Review proposed guidance when your budget or available hours change.',
   },
   {
     icon: Handshake,
     title: 'Discuss your plan',
-    copy: 'Preview, print, or save an adviser handoff with your chosen opportunity, estimated costs and risks, progress, and questions to discuss.',
+    copy: 'Choose the details to share through an expiring adviser link, or print a handoff report. Read private feedback on your dashboard and decide whether to add a recommended next step.',
   },
 ];
 
 const stakeholders = [
+  {
+    icon: Compass,
+    title: 'Newcomers and resettled professionals',
+    copy: 'Immigrants, refugees and people settling in the United States or another new community can explore how their previous experience may connect with local roles and learning opportunities. Workers can identify qualifications and local requirements to discuss with an adviser.',
+  },
   {
     icon: Users,
     title: 'Workers and job seekers',
@@ -54,7 +60,7 @@ const stakeholders = [
   {
     icon: Handshake,
     title: 'Career advisers and workforce teams',
-    copy: 'Advisers and outplacement teams can use the handoff report to discuss trade-offs, check local requirements, and identify support such as training or a referral.',
+    copy: 'Career advisers, workforce teams and resettlement organizations can review worker-selected details, discuss local requirements and suggest training or a practical next step through private feedback.',
   },
   {
     icon: GraduationCap,
@@ -69,14 +75,16 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
       <header
         className={`${card} border-primary/20 bg-gradient-to-br from-primary/10 to-surface-light dark:to-surface-dark`}
       >
-        <p className="text-sm font-medium text-primary">IBM AI Challenge project</p>
+        <Brand className="mb-5" />
+        <p className="text-sm font-medium text-primary">Your talent. Your next chapter.</p>
         <h1 id="about-heading" className="mt-2 text-3xl font-bold">
-          About ReStart AI Cloud
+          About Talivoy
         </h1>
         <p className="mt-3 max-w-3xl leading-relaxed text-muted">
-          A career change can mean sorting through unfamiliar jobs, training costs, and conflicting
-          advice. ReStart AI Cloud gives workers a place to compare their options, choose a
-          direction, and turn that decision into a practical 30-day plan they can discuss with an
+          Your experience matters wherever your next chapter begins. Talivoy helps newcomers,
+          resettled workers, career changers and people returning to work connect their existing
+          strengths with new skills and possible opportunities. Review a personalized set of
+          options, choose a direction and follow a practical 30-day plan with support from an
           adviser.
         </p>
         <button
@@ -121,7 +129,7 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
         <h2 id="about-stakeholders" className="mb-4 text-xl font-bold">
           Who it serves
         </h2>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {stakeholders.map(({ icon: Icon, title, copy }) => (
             <article key={title} className={card}>
               <span className="mb-3 inline-flex rounded-xl bg-primary/10 p-2.5 text-primary">
@@ -141,10 +149,16 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
           </span>
           <h2 className="text-lg font-semibold">How AI supports the decision</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            The AI model suggests opportunities, plan tasks, and fit factors. The app calculates each
-            score using fixed weights for skill fit, affordability, launch speed, and simplicity.
-            Workers choose which plan to focus on. Check cost estimates and local requirements
-            before spending money or applying.
+            IBM Granite through watsonx.ai, or the configured Gemini provider, suggests
+            opportunities, plan tasks and fit factors. Docling-assisted résumé extraction has a
+            local document-reading fallback. The app calculates each score using fixed weights for
+            skill fit, affordability, launch speed, and simplicity. Workers choose which plan to
+            focus on. Check cost estimates and local requirements before spending money or applying.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            Professional licensing, credential recognition and eligibility requirements depend on
+            the role and location. Use the plan and adviser questions to verify which requirements
+            apply to you.
           </p>
         </article>
         <article className={card}>
@@ -155,7 +169,7 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Explore fictional profiles in the guest demo or submit a non-sensitive profile for live
             recommendations. Live plans and progress are saved for the same browser. Faiso developed
-            ReStart AI Cloud for the IBM AI Challenge, with IBM Bob helping build and debug the app.
+            Talivoy for the IBM AI Challenge, with IBM Bob as the primary AI development assistant.
           </p>
         </article>
       </div>

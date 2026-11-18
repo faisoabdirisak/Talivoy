@@ -5,7 +5,7 @@ import type {
   Opportunity,
   PlanItem,
   JobComparisonResult,
-} from '@restart-ai/shared';
+} from '@talivoy/shared';
 import { compareJob, addJobAction } from '../lib/api';
 
 interface Props {

@@ -37,6 +37,8 @@ model Opportunity {
   /// Versioned validated explanation JSON; null for older saved results.
   explanationJson  String?
   planItems        PlanItem[]
+  adviserFeedback  AdviserFeedback[]
+  weeklyCheckIns   WeeklyCheckIn[]
 }
 
 model PlanItem {
@@ -92,7 +94,40 @@ model AdviserShare {
   sessionId   String
   session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   tokenHash   String   @unique
+  opportunityId String?
+  responses AdviserFeedback[]
   snapshotJson String
   expiresAt   DateTime
   createdAt   DateTime @default(now())
+}
+
+
+model AdviserFeedback {
+  id                  String @id
+  opportunityId       String
+  opportunity         Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  shareId             String?
+  share               AdviserShare? @relation(fields: [shareId], references: [id], onDelete: SetNull)
+  reviewerName        String
+  reviewerRole        String
+  practicality        String
+  assessment          String
+  milestoneSuggestion String
+  nextStep            String
+  nextStepDetails     String
+  createdAt           DateTime @default(now())
+  acceptedAt          DateTime?
+}
+
+model WeeklyCheckIn {
+  id               String @id
+  opportunityId    String
+  opportunity      Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  completedWork    String
+  blockers         String
+  budget           Int
+  hours            Float
+  createdAt        DateTime @default(now())
+  appliedAt        DateTime?
+  appliedRevision  String?
 }

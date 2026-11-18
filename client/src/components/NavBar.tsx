@@ -1,5 +1,6 @@
+import { Brand } from './Brand';
 import { useState } from 'react';
-import { Moon, Sun, Zap, Menu, X, Home, LayoutDashboard, Compass, ClipboardList, Info } from 'lucide-react';
+import { Moon, Sun, Menu, X, Home, LayoutDashboard, Compass, ClipboardList, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 
@@ -43,8 +44,7 @@ export function NavBar({ currentPage, onNavigate }: NavBarProps) {
           className="flex items-center gap-2 font-semibold text-app hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
           aria-label="Go to home"
         >
-          <Zap size={20} className="text-primary" />
-          <span>ReStart <span className="text-primary">AI</span></span>
+          <Brand />
         </button>
 
         {/* Desktop nav */}

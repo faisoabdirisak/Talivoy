@@ -1,3 +1,5 @@
+import { PrivateAdviserFeedback } from './components/PrivateAdviserFeedback';
+import { WeeklyCheckIns } from './components/WeeklyCheckIns';
 import { MilestoneReminders } from './components/MilestoneReminders';
 import { AdviserReviewLink } from './components/AdviserReviewLink';
 import { AdviserReviewPage } from './components/AdviserReviewPage';
@@ -21,7 +23,7 @@ import { useSession } from './hooks/useSession';
 
 type NavPage = 'home' | 'opportunities' | 'dashboard' | 'evaluation' | 'about';
 
-const ONBOARDING_KEY = 'restart-ai-onboarding-done';
+const ONBOARDING_KEY = 'talivoy-onboarding-done';
 
 function AppContent() {
   const [page, setPage] = useState<NavPage>('home');
@@ -54,7 +56,8 @@ function AppContent() {
   } = useSession();
 
   useEffect(() => {
-    const done = localStorage.getItem(ONBOARDING_KEY);
+    const done = localStorage.getItem(ONBOARDING_KEY) ?? localStorage.getItem('restart-ai-onboarding-done');
+    if (done) localStorage.setItem(ONBOARDING_KEY, done);
     if (!done) setShowOnboarding(true);
   }, []);
 
@@ -246,6 +249,8 @@ function AppContent() {
                 />
                 {opportunities.filter((item) => item.id === selectedOpportunityId).map((opportunity) => (
                   <div key={`${demoActive}-${opportunity.id}`} className="space-y-6">
+                    <WeeklyCheckIns opportunity={opportunity} demo={demoActive} onApply={applyRefinement} />
+                    <PrivateAdviserFeedback opportunity={opportunity} demo={demoActive} onAdded={addJobAction} />
                     <MilestoneReminders opportunity={opportunity} demo={demoActive} />
                     <AdviserReviewLink opportunity={opportunity} demo={demoActive} />
                   <JobPostingComparison

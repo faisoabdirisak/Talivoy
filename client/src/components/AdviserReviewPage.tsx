@@ -1,9 +1,15 @@
+import { Brand } from './Brand';
+import { AdviserResponseForm } from './AdviserResponseForm';
 import { useEffect, useState } from 'react';
-import type { AdviserSnapshot } from '@restart-ai/shared';
+import type { AdviserSnapshot } from '@talivoy/shared';
 import { readAdviserShare } from '../lib/api';
 
 export function AdviserReviewPage({ token }: { token: string }) {
-  const [review, setReview] = useState<{ snapshot: AdviserSnapshot; expiresAt: string }>();
+  const [review, setReview] = useState<{
+    snapshot: AdviserSnapshot;
+    expiresAt: string;
+    canRespond?: boolean;
+  }>();
   const [error, setError] = useState('');
   useEffect(() => {
     let active = true;
@@ -24,7 +30,8 @@ export function AdviserReviewPage({ token }: { token: string }) {
   return (
     <main className="min-h-screen bg-background-light px-6 py-12 text-app dark:bg-background-dark">
       <article className="mx-auto max-w-3xl space-y-5 rounded-2xl border border-primary/20 bg-surface-light p-6 dark:bg-surface-dark">
-        <p className="font-semibold text-primary">ReStart AI Cloud · Adviser review</p>
+        <Brand />
+        <p className="font-semibold text-primary">Adviser review</p>
         {error && <p role="alert">{error}</p>}
         {!review && !error && <p role="status">Loading shared plan…</p>}
         {review && (
@@ -68,6 +75,14 @@ export function AdviserReviewPage({ token }: { token: string }) {
                 ))}
               </section>
             )}
+            {review.canRespond ? (
+              <AdviserResponseForm key={token} token={token} />
+            ) : (
+              <p className="text-sm text-muted">
+                To send private feedback, ask the worker to create a new review link with the
+                updated app.
+              </p>
+            )}
             <p className="text-sm text-muted">
               Career suggestions are AI estimates. Discuss local requirements, costs and practical
               next steps with the worker.
@@ -78,7 +93,7 @@ export function AdviserReviewPage({ token }: { token: string }) {
           href={window.location.pathname}
           className="inline-block text-sm font-semibold text-primary"
         >
-          Open ReStart AI Cloud
+          Open Talivoy
         </a>
       </article>
     </main>

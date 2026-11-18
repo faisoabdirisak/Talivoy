@@ -1,7 +1,7 @@
 import { useState, useId, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, AlertCircle, Sparkles, FileUp } from 'lucide-react';
-import { AnalyzeRequestSchema, type AnalyzeRequest } from '@restart-ai/shared';
+import { AnalyzeRequestSchema, type AnalyzeRequest } from '@talivoy/shared';
 
 interface ProfileFormProps {
   /** Called with validated data when user submits */

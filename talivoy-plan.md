@@ -1,4 +1,4 @@
-# ReStart AI Cloud — IBM AI Challenge Plan
+# Talivoy — IBM AI Challenge Plan
 
 ## Overview
 
@@ -25,7 +25,7 @@ The original milestones below describe the Gemini implementation. The current ap
 ## Architecture
 
 ```
-restart-ai-cloud/
+Talivoy/
 ├── client/          # React + Vite + TypeScript + Tailwind + Motion + Lucide
 ├── server/          # Express + TypeScript + Zod + Prisma (SQLite)
 ├── shared/          # Zod schemas + TypeScript types shared by both sides
@@ -334,19 +334,33 @@ Explanation visual polish: gradient overview and fit ring, icon-led estimate car
 
 Recorded implementation checks covered 26 shared, 94 server and 51 client tests across package runs and the corrected targeted client rerun. Lint, type checking and production build passed. Server coverage at that check was 92.71% statements, 87.66% branches, 98.80% functions and 93.62% lines. A new GitHub Actions run remains a release check after pushing.
 
-## Proposed next development
+## Adviser feedback and weekly check-ins — implemented locally
 
 ### Private adviser feedback on a shared plan
 
-Status is proposed. An adviser would submit a name, self-reported role, practicality assessment, milestone suggestion and next step from the shared page. The worker would read responses privately and choose changes to apply.
+- [x] Add an adviser response form to the shared review page.
+- [x] Capture name, self-reported role, practicality assessment, milestone suggestions and a recommended next step.
+- [x] Save responses with the shared plan and enforce link expiry and revocation.
+- [x] Show responses privately to the worker who owns the plan.
+- [x] Let the worker review and approve suggested changes.
+- [x] Verify access controls and preservation of completed progress.
 
-Implementation needs a response schema, storage linked to the share, expiry/revocation-aware submission, worker-owned retrieval, an adviser form and explicit review of plan changes. The current shared page reads snapshots.
+Implemented. Advisers can submit private responses through a newly created active review link. Workers review the response, confirm it, and add a recommended next step as a Week 4 milestone.
+
+Implemented schemas, storage, expiry/revocation-aware submission, owner-only retrieval and worker confirmation. Revocation retains submitted responses. Guest-session deletion removes them. Existing links keep readable snapshots and need replacement to enable responses.
 
 ### Weekly check-ins
 
-Status is proposed. Workers would record completed work, blockers and changes to time or budget, then review suggested adjustments.
+- [x] Add a weekly form for completed work, blockers, available hours and budget changes.
+- [x] Store check-in history under the worker's guest session.
+- [x] Show progress and previous check-ins on the dashboard.
+- [x] Preview proposed plan adjustments before applying them.
+- [x] Preserve completed milestones and ask the worker to confirm changes.
+- [x] Verify session ownership, history and adjustment behavior.
 
-Implementation needs a check-in schema, worker-owned create/read routes, history, adjustment preview and tests protecting completed progress. The current manual refinement tool provides the existing time/budget flow.
+Implemented. Workers record completed work, blockers, budget and available hours, save private history and review proposed guidance for unfinished milestones.
+
+Implemented check-in schemas, owner-scoped routes, retry-safe saving, history, revision-protected previews and transactional application. The proposal reuses existing time/budget rules. Blockers are retained as discussion context, and completed milestone descriptions and progress remain saved.
 
 ## Documentation map
 
@@ -356,3 +370,19 @@ Implementation needs a check-in schema, worker-owned create/read routes, history
 - `docs/SECURITY.md` records access controls, shared/public data and retention.
 - `docs/DEPLOYMENT.md` covers schema updates, restart and remote acceptance.
 - `docs/CONTRIBUTING.md` records verification and manual checks.
+
+
+## Implementation verification — adviser responses and weekly check-ins
+
+Real SQLite integration checks cover response privacy, expired/revoked submission rejection, retained responses after revocation, repeat-safe acceptance, check-in save retries, stale previews, application retries and completion preservation. Frontend checks exercise deliberate adviser submission and worker approval.
+
+The development database was backed up before adding the tables and regenerating Prisma Client. Public remote deployment and independent user acceptance remain pending.
+
+
+Verification for this update passed 176 tests (26 shared, 96 server, 54 client), lint, type checking and the production build. Server coverage passed with 93.12% statements, 87.72% branches, 98.94% functions and 94.19% lines. Vite reported its bundle-size advisory for the approximately 510 kB main JavaScript chunk. Production performance and remote browser acceptance remain follow-up checks.
+
+## Talivoy rebrand
+
+The application is now named Talivoy with the promise “Your talent. Your next chapter.” Navigation, footer, About, onboarding, document headings, reports and calendar text use the new identity. The About page describes support for newcomers and resettled workers alongside broader career transitions. Existing guest cookies and onboarding preferences have compatibility handling.
+
+The package scope is @talivoy. The local checkout folder is Talivoy and the GitHub repository is https://github.com/faisoabdirisak/Talivoy. This file is the renamed original development plan.

@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, it, vi } from 'vitest';
-import { createDemoOpportunities } from '@restart-ai/shared';
+import { createDemoOpportunities } from '@talivoy/shared';
 import { OpportunityComparison } from '../components/OpportunityComparison';
 
 it('compares estimates against the budget and lets the worker focus a lower-cost option', async () => {

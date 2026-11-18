@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Columns2, Target, X } from 'lucide-react';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 import { CategoryBadge } from './CategoryBadge';
 
 const usd = new Intl.NumberFormat('en-US', {

@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
-import { createDemoOpportunities } from '@restart-ai/shared';
+import { createDemoOpportunities } from '@talivoy/shared';
 import { DashboardPreview } from '../components/DashboardPreview';
 import { restoreSession } from '../lib/api';
 

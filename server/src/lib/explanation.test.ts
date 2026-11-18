@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { RawOpportunitySchema } from '@restart-ai/shared';
+import { RawOpportunitySchema } from '@talivoy/shared';
 import { createExplanation, readExplanation } from './explanation';
 const raw = RawOpportunitySchema.parse({
   title: 'Example', category: 'career-pivot', summary: 'Example', reasoning: 'Example',

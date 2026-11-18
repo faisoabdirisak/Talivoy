@@ -1,6 +1,8 @@
-# ReStart AI Cloud
+# Talivoy
 
-Career exploration and actionable next steps for people navigating a work transition.
+Your talent. Your next chapter.
+
+Career exploration, upskilling and practical next steps for newcomers, resettled workers, career changers and people returning to work.
 Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the primary AI development assistant.
 
 | Layer | Technology |
@@ -14,7 +16,7 @@ Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the prima
 
 ## How the IBM tools are used
 
-**IBM Bob was the primary AI development assistant.** Faiso used Bob to build ReStart AI Cloud in stages, from the initial application and recommendation pipeline through guest sessions, dashboard progress, and CI. Bob helped implement changes and diagnose issues such as the Prisma startup failure. Faiso set the project direction and tested the worker and guest demo journeys.
+**IBM Bob was the primary AI development assistant.** Faiso used Bob to build Talivoy in stages, from the initial application and recommendation pipeline through guest sessions, dashboard progress, and CI. Bob helped implement changes and diagnose issues such as the Prisma startup failure. Faiso set the project direction and tested the worker and guest demo journeys.
 
 **IBM Granite on watsonx.ai interprets résumés and generates career recommendations.** After a worker selects a file and clicks **Analyze My Résumé**, Granite suggests a recent role, location, skills, experience, education, and stated interests from the extracted text. The worker edits and confirms those details before **Generate My Opportunities** sends the completed profile to the configured model. The API validates the returned opportunities and computes the feasibility scores in TypeScript.
 
@@ -44,7 +46,7 @@ Costs and suggested resources are not independently verified. This is a challeng
 ## Local setup (PowerShell)
 
 Use Node 22.13+ within the 22.x line, or a supported Node 24+ release, and npm 9+.
-Run these commands inside `restart-ai-cloud`, not its parent folder:
+Run these commands inside the `Talivoy` application folder. The repository is [faisoabdirisak/Talivoy](https://github.com/faisoabdirisak/Talivoy).
 
 ```powershell
 npm ci
@@ -166,18 +168,25 @@ Plan View offers a refinement preview using the worker's total budget and availa
 
 The Evaluation page publishes submitted usefulness feedback after explicit publication consent. The form records the reviewer's name, self-reported role and affiliation, fit/usefulness answers, suggested next step and comments. Visitors can read published feedback. The reviewer code is stored and omitted from public responses. Public evaluations remain in their own table when a guest session is deleted.
 
-## Proposed next features
+## Private adviser feedback
 
-| Feature | Proposed worker journey | Status |
-| --- | --- | --- |
-| Private adviser feedback on a shared plan | Adviser submits a name, self-reported role, practicality assessment, milestone suggestion and next step. The worker reviews responses privately and chooses any changes to apply. | Proposed |
-| Weekly check-ins | Worker records progress, blockers and changes to time or budget, then reviews proposed plan adjustments. | Proposed |
+Focus a saved opportunity on the Dashboard and create an adviser review link. The adviser opens the selected snapshot, enters a name and self-reported role, assesses practicality, suggests milestone changes and recommends one next step. **Send Feedback to Worker** stores those answers privately. The shared page returns a submission confirmation and displays the worker-selected snapshot.
 
-The current adviser link displays the chosen snapshot. Its page and API support reading that snapshot. The existing Evaluation page provides the implemented public feedback workflow.
+On the Dashboard, open **Private adviser feedback** and use **Refresh responses** to load new replies. Review the assessment and recommended next step, check the confirmation box, then choose **Add Reviewed Next Step** to add a Week 4 milestone. Existing task completion remains saved. Repeat saves reuse the same task.
+
+Expired and revoked links reject further responses. Responses already submitted remain available to the worker after a link is revoked. Deleting the guest session removes its private responses. Reviewer names and roles are self-reported. Older links created before this update still show their saved snapshots; create a new link to enable the response form.
+
+## Weekly check-ins
+
+Focus a saved opportunity and open **Check In This Week**. Record what you worked on, blockers, your total available budget and weekly hours. Saving creates a private history entry. Record task completion using the plan checkboxes so dashboard progress reflects completed milestones.
+
+From an entry, choose **Review Proposed Adjustments**. The app uses the existing time/budget rules to propose guidance for unfinished tasks. Review the current and proposed descriptions, confirm the changes, and choose **Apply Reviewed Adjustments**, or keep the current plan. Blockers remain in the history for discussion. If saved tasks change after the preview, generate a fresh preview before applying. Completed milestones retain their guidance and completion state.
+
+Private adviser feedback and check-in history use saved live guest plans. The fictional demo keeps its existing temporary plan interactions.
 
 ## Project references
 
-- [Development plan and stage status](restart-ai-cloud-plan.md)
+- [Development plan and stage status](talivoy-plan.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [API reference](docs/API.md)
 - [Contributing and verification](docs/CONTRIBUTING.md)
@@ -194,3 +203,12 @@ For existing installations, back up SQLite before `npm run db:push --workspace=s
 The schema adds one nullable `Opportunity.explanationJson` text column. Do not reset the database or use `--accept-data-loss`.
 Existing rows need no backfill. New AI analyses receive explanation details; the app does not infer missing facts for older results.
 The demo seed includes fictional explanations; seeding refreshes only the three public fictional sessions.
+
+
+## Talivoy identity
+
+Talivoy combines the ideas of talent and a voyage toward the next career chapter. The app helps workers build on previous experience, explore skills and opportunities, and review practical plans with advisers. The About page includes newcomers, immigrants and resettled professionals alongside other workers in transition.
+
+The interface, adviser reports, calendar event text and package names use Talivoy. New guest sessions use talivoy_sid; the server accepts existing restart_sid cookies so saved plans remain accessible. Start over clears both names. The onboarding preference transfers to talivoy-onboarding-done. Calendar event UIDs retain their previous namespace so previously imported reminders keep their identity.
+
+The development plan is talivoy-plan.md. The local application folder is Talivoy and the GitHub repository is faisoabdirisak/Talivoy. The footer contact link opens its GitHub issues page unless a contact email is configured.

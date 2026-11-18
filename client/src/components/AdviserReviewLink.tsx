@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link2, ShieldCheck, X, Copy } from 'lucide-react';
-import type { AdviserShare, AdviserShareInput, Opportunity } from '@restart-ai/shared';
+import type { AdviserShare, AdviserShareInput, Opportunity } from '@talivoy/shared';
 import { createAdviserShare, listAdviserShares, revokeAdviserShare } from '../lib/api';
 
 export function AdviserReviewLink({

@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { SlidersHorizontal } from 'lucide-react';
-import { RefinementConstraints, refineRemainingTasks, type Opportunity } from '@restart-ai/shared';
+import { RefinementConstraints, refineRemainingTasks, type Opportunity } from '@talivoy/shared';
 import { ApiError, refinePlan } from '../lib/api';
 
 export function PlanRefinement({

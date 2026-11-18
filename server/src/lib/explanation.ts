@@ -1,4 +1,4 @@
-import { OpportunityExplanationSchema, type RawOpportunity, type OpportunityExplanation } from '@restart-ai/shared';
+import { OpportunityExplanationSchema, type RawOpportunity, type OpportunityExplanation } from '@talivoy/shared';
 
 export function createExplanation(raw: RawOpportunity): OpportunityExplanation {
   return OpportunityExplanationSchema.parse({

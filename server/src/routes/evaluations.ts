@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { createDemoOpportunities, EvaluationInputSchema } from '@restart-ai/shared';
+import { createDemoOpportunities, EvaluationInputSchema } from '@talivoy/shared';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { prisma } from '../lib/db.js';
 import { getSessionToken } from '../lib/session.js';

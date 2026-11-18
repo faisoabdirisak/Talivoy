@@ -11,7 +11,7 @@ import type {
   Session,
   ProgressUpdate,
   SelectOpportunity,
-} from '@restart-ai/shared';
+} from '@talivoy/shared';
 
 export class ApiError extends Error {
   constructor(
@@ -129,12 +129,12 @@ export async function loadDemoSession(
 
 export async function refinePlan(
   opportunityId: string,
-  constraints: import('@restart-ai/shared').RefinementConstraints,
+  constraints: import('@talivoy/shared').RefinementConstraints,
   revision?: string
 ) {
   return apiFetch<{
-    original: import('@restart-ai/shared').Opportunity;
-    refined: import('@restart-ai/shared').Opportunity;
+    original: import('@talivoy/shared').Opportunity;
+    refined: import('@talivoy/shared').Opportunity;
     revision: string;
   }>('/api/sessions/me/refine', {
     method: 'POST',
@@ -143,18 +143,18 @@ export async function refinePlan(
 }
 
 export function listEvaluations() {
-  return apiFetch<import('@restart-ai/shared').PublicEvaluation[]>('/api/evaluations', {
+  return apiFetch<import('@talivoy/shared').PublicEvaluation[]>('/api/evaluations', {
     method: 'GET',
   });
 }
 
-export function submitEvaluation(input: import('@restart-ai/shared').EvaluationInput) {
-  return apiFetch<import('@restart-ai/shared').PublicEvaluation>('/api/evaluations', {
+export function submitEvaluation(input: import('@talivoy/shared').EvaluationInput) {
+  return apiFetch<import('@talivoy/shared').PublicEvaluation>('/api/evaluations', {
     method: 'POST',
     body: JSON.stringify(input),
   });
 }
-import type { JobComparisonInput, JobComparisonResult, PlanItem } from '@restart-ai/shared';
+import type { JobComparisonInput, JobComparisonResult, PlanItem } from '@talivoy/shared';
 
 export function compareJob(input: JobComparisonInput) {
   return apiFetch<JobComparisonResult>('/api/job-comparison', {
@@ -169,7 +169,7 @@ export function addJobAction(opportunityId: string, result: JobComparisonResult)
   });
 }
 
-import type { AdviserShare, AdviserShareInput, AdviserSnapshot, MilestoneReminder } from '@restart-ai/shared';
+import type { AdviserShare, AdviserShareInput, AdviserSnapshot, MilestoneReminder } from '@talivoy/shared';
 
 export const listReminders = () => apiFetch<MilestoneReminder[]>('/api/support/reminders', { method: 'GET' });
 export const saveReminder = (planItemId: string, dueAt: string) =>
@@ -181,4 +181,20 @@ export const createAdviserShare = (input: AdviserShareInput) =>
 export const revokeAdviserShare = (id: string) =>
   apiFetch<void>('/api/support/adviser-shares/' + encodeURIComponent(id), { method: 'DELETE' });
 export const readAdviserShare = (token: string) =>
-  apiFetch<{ snapshot: AdviserSnapshot; expiresAt: string }>('/api/support/adviser-review/read', { method: 'POST', body: JSON.stringify({ token }) });
+  apiFetch<{ snapshot: AdviserSnapshot; expiresAt: string; canRespond?: boolean }>('/api/support/adviser-review/read', { method: 'POST', body: JSON.stringify({ token }) });
+
+import type { AdviserFeedbackInput, AdviserFeedback, WeeklyCheckInInput, WeeklyCheckIn, Opportunity } from '@talivoy/shared';
+export const submitAdviserFeedback = (input: AdviserFeedbackInput) =>
+  apiFetch<{ submitted: boolean }>('/api/support/adviser-review/respond', { method: 'POST', body: JSON.stringify(input) });
+export const listAdviserFeedback = (opportunityId: string) =>
+  apiFetch<AdviserFeedback[]>('/api/support/adviser-feedback?opportunityId=' + encodeURIComponent(opportunityId), { method: 'GET' });
+export const acceptAdviserFeedback = (id: string) =>
+  apiFetch<PlanItem>('/api/support/adviser-feedback/' + encodeURIComponent(id) + '/accept', { method: 'POST', body: '{}' });
+export const listCheckIns = (opportunityId: string) =>
+  apiFetch<WeeklyCheckIn[]>('/api/support/check-ins?opportunityId=' + encodeURIComponent(opportunityId), { method: 'GET' });
+export const saveCheckIn = (input: WeeklyCheckInInput) =>
+  apiFetch<WeeklyCheckIn>('/api/support/check-ins', { method: 'POST', body: JSON.stringify(input) });
+export const refineCheckIn = (id: string, revision?: string) =>
+  apiFetch<{ original: Opportunity; refined: Opportunity; revision: string }>('/api/support/check-ins/' + encodeURIComponent(id) + '/refine', {
+    method: 'POST', body: JSON.stringify({ revision }),
+  });

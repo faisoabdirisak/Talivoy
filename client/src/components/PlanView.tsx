@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { PlanRefinement } from './PlanRefinement';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, Circle, ExternalLink, Calendar } from 'lucide-react';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 import { FeasibilityRing } from './FeasibilityRing';
 import { OpportunityExplanation } from './OpportunityExplanation';
 import { CategoryBadge } from './CategoryBadge';

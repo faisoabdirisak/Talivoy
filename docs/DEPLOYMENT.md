@@ -10,7 +10,7 @@ This repository supports a **single Express process with SQLite on persistent st
 4. Inject server-only environment variables through the host's secret manager:
    Set `AI_PROVIDER` and the matching provider settings from the [README](../README.md). Also set
    `NODE_ENV=production`, `CLIENT_ORIGIN=https://your-public-host`,
-   `DATABASE_URL=file:/absolute/persistent/path/restart.db`, and the host's `PORT`.
+   `DATABASE_URL=file:/absolute/persistent/path/talivoy.db`, and the host's `PORT`.
 5. Run `npm run db:generate --workspace=server` if the host did not generate Prisma Client during install.
 6. Back up any existing database, inspect schema changes, then run `npm run db:push --workspace=server` as a controlled release step.
    Do not use `--accept-data-loss` or reset against user data. A migration/backup process is needed before operating a production service.
@@ -56,3 +56,12 @@ If `EADDRINUSE` reports port 3001, identify the listening application and stop t
 A localhost link identifies the viewer's own computer. Remote review requires a reachable deployed origin. Workers choose how to send generated links. Dashboard notices require the app to be open, and calendar alerts require importing the event. Actual calendar delivery and public remote review remain acceptance checks.
 
 Job-comparison action authorizations use a process-memory signing key, so a restart invalidates pending actions. Existing adviser snapshots remain readable until database expiry or revocation, subject to storage availability.
+
+
+## Adviser response and check-in schema update
+
+The current update adds AdviserFeedback and WeeklyCheckIn tables and an optional opportunityId on AdviserShare. Back up SQLite, stop the server, apply the schema using the existing db:push command and start the server. The local database was backed up before this additive update.
+
+Create a fresh adviser link to enable responses. Existing snapshots remain readable. Verify a response from a browser without the worker cookie, private retrieval from the owner dashboard, rejection after revocation, and acceptance of a next step. Submit a weekly check-in, reload its history, review an adjustment and verify completed tasks retain their state.
+
+These features use the existing saved guest session. Losing the guest cookie also loses dashboard access to private responses and check-in history.

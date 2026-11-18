@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bell, CalendarPlus, Trash2 } from 'lucide-react';
-import type { MilestoneReminder, Opportunity } from '@restart-ai/shared';
+import type { MilestoneReminder, Opportunity } from '@talivoy/shared';
 import { listReminders, saveReminder, removeReminder } from '../lib/api';
 import { reminderCalendar } from '../lib/reminderCalendar';
 
@@ -165,7 +165,7 @@ export function MilestoneReminders({
                       );
                       const anchor = document.createElement('a');
                       anchor.href = url;
-                      anchor.download = 'restart-milestone.ics';
+                      anchor.download = 'talivoy-milestone.ics';
                       document.body.append(anchor);
                       anchor.click();
                       anchor.remove();

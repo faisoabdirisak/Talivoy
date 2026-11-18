@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@restart-ai/shared': path.resolve(__dirname, '../shared/src/index.ts'),
+      '@talivoy/shared': path.resolve(__dirname, '../shared/src/index.ts'),
     },
   },
   test: {

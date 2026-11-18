@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import { Router, raw } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { AnalyzeRequestSchema } from '@restart-ai/shared';
+import { AnalyzeRequestSchema } from '@talivoy/shared';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { extractWithDocling } from '../lib/docling.js';
 import { generateGraniteContent } from '../lib/granite.js';

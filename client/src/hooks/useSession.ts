@@ -8,8 +8,8 @@
  * does NOT replace the live session, and returning from demo restores it.
  */
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import type { Opportunity, AnalyzeRequest } from '@restart-ai/shared';
-import { computeStreak, createDemoOpportunities, type DemoPersonaId } from '@restart-ai/shared';
+import type { Opportunity, AnalyzeRequest } from '@talivoy/shared';
+import { computeStreak, createDemoOpportunities, type DemoPersonaId } from '@talivoy/shared';
 import {
   analyzeProfile,
   restoreSession,

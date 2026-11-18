@@ -1,4 +1,4 @@
-import type { MilestoneReminder, PlanItem } from '@restart-ai/shared';
+import type { MilestoneReminder, PlanItem } from '@talivoy/shared';
 
 const escapeText = (value: string) =>
   value.replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
@@ -12,7 +12,7 @@ export function reminderCalendar(reminder: MilestoneReminder, task: PlanItem) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//ReStart AI Cloud//Milestones//EN',
+    'PRODID:-//Talivoy//Milestones//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
@@ -21,7 +21,7 @@ export function reminderCalendar(reminder: MilestoneReminder, task: PlanItem) {
     'DTSTART:' + stamp(reminder.dueAt),
     'DURATION:PT15M',
     'SUMMARY:' + escapeText(task.title),
-    'DESCRIPTION:' + escapeText('ReStart AI Cloud milestone. ' + (task.description ?? '')),
+    'DESCRIPTION:' + escapeText('Talivoy milestone. ' + (task.description ?? '')),
     'BEGIN:VALARM',
     'ACTION:DISPLAY',
     'TRIGGER:PT0S',

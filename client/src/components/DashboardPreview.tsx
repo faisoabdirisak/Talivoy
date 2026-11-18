@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, TrendingUp, Target, AlertTriangle, Flame, ArrowRight } from 'lucide-react';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 import { FeasibilityRing } from './FeasibilityRing';
 import { AdviserHandoff } from './AdviserHandoff';
 import { CategoryBadge } from './CategoryBadge';

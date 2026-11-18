@@ -12,8 +12,8 @@
  *
  * TypeScript controls the formula; AI-supplied signals still influence the score.
  */
-import { calculateScoreBreakdown, type ScoringSignals } from '@restart-ai/shared';
-export type { ScoringSignals } from '@restart-ai/shared';
+import { calculateScoreBreakdown, type ScoringSignals } from '@talivoy/shared';
+export type { ScoringSignals } from '@talivoy/shared';
 
 export function computeFeasibilityScore(signals: ScoringSignals): number {
   return calculateScoreBreakdown(signals).total;

@@ -39,6 +39,7 @@ const FLOAT_CARDS = [
 export function Hero({ onGetStarted, onTryDemo }: HeroProps) {
   return (
     <section className="relative py-16 sm:py-24 overflow-hidden" aria-labelledby="hero-heading">
+      <p className="relative mb-3 text-center text-sm font-semibold tracking-wide text-primary">Talivoy · Your talent. Your next chapter.</p>
       {/* Orbital background — CSS only, respects prefers-reduced-motion via Tailwind */}
       <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
         {/* Gradient orbs */}

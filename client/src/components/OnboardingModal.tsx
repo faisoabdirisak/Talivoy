@@ -47,7 +47,7 @@ export function OnboardingModal({ onClose }: OnboardingModalProps) {
       className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Welcome to ReStart AI"
+      aria-label="Welcome to Talivoy"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 16 }}

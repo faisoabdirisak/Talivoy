@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 import { FeasibilityRing } from './FeasibilityRing';
 import { CategoryBadge } from './CategoryBadge';
-import type { Opportunity } from '@restart-ai/shared';
-import { calculateScoreBreakdown } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
+import { calculateScoreBreakdown } from '@talivoy/shared';
 
 export function OpportunityExplanation({ opportunity }: { opportunity: Opportunity }) {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowLeft, ClipboardList, PenLine, RefreshCw } from 'lucide-react';
-import { EvaluationInputSchema, type Opportunity, type PublicEvaluation } from '@restart-ai/shared';
+import { EvaluationInputSchema, type Opportunity, type PublicEvaluation } from '@talivoy/shared';
 import { listEvaluations, submitEvaluation } from '../lib/api';
 
 const field =

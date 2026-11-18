@@ -1,5 +1,5 @@
 // Mock data for ST-1B UI preview — no server calls, no real API
-import type { Opportunity, PlanItem } from '@restart-ai/shared';
+import type { Opportunity, PlanItem } from '@talivoy/shared';
 
 const makePlanItems = (opportunityId: string): PlanItem[] =>
   Array.from({ length: 12 }, (_, i) => ({

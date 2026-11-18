@@ -1,7 +1,7 @@
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, it, vi } from 'vitest';
-import { createDemoOpportunities, type Session } from '@restart-ai/shared';
+import { createDemoOpportunities, type Session } from '@talivoy/shared';
 vi.mock('../lib/api', () => ({ restoreSession: vi.fn(), loadDemoSession: vi.fn(), updateProgress: vi.fn(),
   selectOpportunity: vi.fn(), clearSession: vi.fn(), analyzeProfile: vi.fn(), ApiError: class extends Error {} }));
 import { restoreSession, loadDemoSession, updateProgress, selectOpportunity, clearSession } from '../lib/api';

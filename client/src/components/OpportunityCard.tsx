@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 import { FeasibilityRing } from './FeasibilityRing';
 import { OpportunityExplanation } from './OpportunityExplanation';
 import { CategoryBadge } from './CategoryBadge';

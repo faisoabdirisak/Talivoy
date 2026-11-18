@@ -1,4 +1,5 @@
-import { ArrowUpRight, Github, Heart, Mail, Zap } from 'lucide-react';
+import { Brand } from './Brand';
+import { ArrowUpRight, Github, Heart, Mail } from 'lucide-react';
 import { NavBar } from './NavBar';
 import { GuestDemoBar } from './GuestDemoBar';
 
@@ -26,7 +27,7 @@ export function AppShell({
   const contactEmail = import.meta.env.VITE_CONTACT_EMAIL?.trim();
   const contactUrl = contactEmail
     ? `mailto:${contactEmail}`
-    : 'https://github.com/faisoabdirisak/ReStartAICloud/issues';
+    : 'https://github.com/faisoabdirisak/Talivoy/issues';
   const ContactIcon = contactEmail ? Mail : Github;
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-200">
@@ -46,14 +47,9 @@ export function AppShell({
               aria-labelledby="footer-project"
               className="rounded-2xl border border-border-light bg-background-light p-5 dark:border-border-dark dark:bg-background-dark"
             >
-              <span className="mb-3 inline-flex rounded-xl bg-primary/10 p-2.5 text-primary">
-                <Zap size={20} aria-hidden="true" />
-              </span>
-              <h2 id="footer-project" className="font-semibold text-app">
-                ReStart AI Cloud
-              </h2>
+              <h2 id="footer-project"><Brand /></h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                Explore career options and turn your choice into a practical 30-day plan.
+                Carry your experience forward. Build skills, explore opportunities and take your next career step.
               </p>
             </section>
 

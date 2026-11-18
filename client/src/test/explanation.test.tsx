@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, it } from 'vitest';
-import { createDemoOpportunities } from '@restart-ai/shared';
+import { createDemoOpportunities } from '@talivoy/shared';
 import { OpportunityExplanation } from '../components/OpportunityExplanation';
 it('opens with keyboard and explains weights, costs, risks and uncertainty', async () => {
   const opp = createDemoOpportunities('james')[0];

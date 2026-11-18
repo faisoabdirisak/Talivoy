@@ -17,7 +17,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@restart-ai/shared": ["../shared/src/index.ts"]
+      "@talivoy/shared": ["../shared/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts"]

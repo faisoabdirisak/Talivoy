@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { RefinementConstraints, refineRemainingTasks } from '@restart-ai/shared';
+import { RefinementConstraints, refineRemainingTasks } from '@talivoy/shared';
 import { readExplanation } from '../lib/explanation.js';
 /**
  * Session routes — restore, update progress, select opportunity, clear.
@@ -17,7 +17,7 @@ import {
   type Opportunity,
   type PlanItem,
   type Session,
-} from '@restart-ai/shared';
+} from '@talivoy/shared';
 import { prisma } from '../lib/db.js';
 import { getSessionToken, clearSessionCookie } from '../lib/session.js';
 
@@ -50,7 +50,7 @@ async function loadOwnSession(cookieToken: string): Promise<SessionWithRelations
   });
 }
 
-function buildSessionResponse(dbSession: SessionWithRelations | null): Session | null {
+export function buildSessionResponse(dbSession: SessionWithRelations | null): Session | null {
   if (!dbSession) return null;
   const opportunities: Opportunity[] = dbSession.opportunities
     .map((opp) => ({

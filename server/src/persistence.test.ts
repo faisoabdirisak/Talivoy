@@ -9,7 +9,7 @@ vi.mock('./lib/gemini.js', () => ({
   generateContent: vi.fn(), GeminiError: class extends Error {},
 }));
 import { generateContent } from './lib/gemini.js';
-const folder = mkdtempSync(path.join(tmpdir(), 'restart-st5-db-'));
+const folder = mkdtempSync(path.join(tmpdir(), 'talivoy-test-db-'));
 const database = path.join(folder, 'integration.db');
 let app: (typeof import('./index.js'))['default'];
 let prisma: (typeof import('./lib/db.js'))['prisma'];
@@ -218,4 +218,124 @@ it('persists reminders and shares only selected plan details through an expiring
   expect((await request(app).get(path + '/reminders').set('Cookie', cookie)).body).toEqual([]);
   await prisma.session.delete({ where: { id: session.id } });
   expect(await prisma.adviserShare.count({ where: { sessionId: session.id } })).toBe(0);
+});
+
+it('keeps adviser responses private, retains them after revocation, and requires worker approval to add a next step', async () => {
+  const ownerToken = 'adviser-feedback-owner';
+  const session = await prisma.session.create({
+    data: { cookieToken: ownerToken, opportunities: { create: {
+      title: 'Adviser feedback test', category: 'career-pivot', summary: 'Summary', reasoning: 'Reasoning',
+      feasibilityScore: 80, rank: 1,
+      planItems: { create: { title: 'Already completed', description: 'Original guidance', day: 1, week: 1,
+        progressEntry: { create: { isCompleted: true, completedAt: new Date('2026-11-01') } } } },
+    } } },
+    include: { opportunities: { include: { planItems: { include: { progressEntry: true } } } } },
+  });
+  const opportunity = session.opportunities[0];
+  const cookie = 'restart_sid=' + ownerToken;
+  const root = '/api/support';
+  const created = await request(app).post(root + '/adviser-shares').set('Cookie', cookie).send({
+    opportunityId: opportunity.id, includeTitle: true, includeSummary: false, includeReasoning: false,
+    includeProgress: false, taskIds: [], expiresInDays: 7,
+  });
+  expect(created.status).toBe(201);
+  const read = await request(app).post(root + '/adviser-review/read').send({ token: created.body.token });
+  expect(read.body.canRespond).toBe(true);
+  const feedback = { token: created.body.token, requestId: 'd0f164be-b413-42a7-83d7-c3d89b366018',
+    reviewerName: 'Fictional Adviser', reviewerRole: 'Career adviser', practicality: 'Needs changes',
+    assessment: 'Practice before applying.', milestoneSuggestion: 'Build a small report.',
+    nextStep: 'Practice stock reporting', nextStepDetails: 'Create a spreadsheet from fictional inventory.' };
+  expect((await request(app).post(root + '/adviser-review/respond').send({ token: created.body.token })).status).toBe(400);
+  expect((await request(app).post(root + '/adviser-review/respond').send(feedback)).status).toBe(201);
+  expect((await request(app).post(root + '/adviser-review/respond').send(feedback)).body).toEqual({ submitted: true });
+  expect(await prisma.adviserFeedback.count({ where: { opportunityId: opportunity.id } })).toBe(1);
+  const listPath = root + '/adviser-feedback?opportunityId=' + opportunity.id;
+  expect((await request(app).get(listPath)).status).toBe(401);
+  expect((await request(app).get(listPath).set('Cookie', 'restart_sid=another-worker')).body).toEqual([]);
+  const responses = await request(app).get(listPath).set('Cookie', cookie);
+  expect(responses.body).toHaveLength(1);
+  expect(responses.text).not.toContain(created.body.token);
+  expect(responses.text).not.toContain('shareId');
+  expect(await prisma.planItem.count({ where: { opportunityId: opportunity.id } })).toBe(1);
+  const id = responses.body[0].id;
+  expect((await request(app).post(root + '/adviser-feedback/' + id + '/accept')
+    .set('Cookie', 'restart_sid=another-worker').send({})).status).toBe(404);
+  const accepted = await request(app).post(root + '/adviser-feedback/' + id + '/accept').set('Cookie', cookie).send({});
+  expect(accepted.status).toBe(200);
+  expect(accepted.body.day).toBe(30);
+  const retry = await request(app).post(root + '/adviser-feedback/' + id + '/accept').set('Cookie', cookie).send({});
+  expect(retry.body.id).toBe(accepted.body.id);
+  expect(await prisma.planItem.count({ where: { opportunityId: opportunity.id } })).toBe(2);
+  expect((await prisma.progressEntry.findUniqueOrThrow({
+    where: { planItemId: opportunity.planItems[0].id },
+  })).completedAt).toEqual(new Date('2026-11-01'));
+
+  await prisma.adviserShare.update({ where: { id: created.body.id }, data: { expiresAt: new Date(0) } });
+  expect((await request(app).post(root + '/adviser-review/respond')
+    .send({ ...feedback, requestId: '0f99df1d-0ff6-4d8a-9dbb-e1703d0ea86c' })).status).toBe(404);
+  await request(app).delete(root + '/adviser-shares/' + created.body.id).set('Cookie', cookie);
+  expect((await request(app).post(root + '/adviser-review/respond').send(feedback)).status).toBe(404);
+  expect((await request(app).get(listPath).set('Cookie', cookie)).body).toHaveLength(1);
+  expect((await prisma.adviserFeedback.findUniqueOrThrow({ where: { id } })).shareId).toBeNull();
+
+  const legacy = await prisma.adviserShare.create({
+    data: { sessionId: session.id, tokenHash: 'legacy-hash', snapshotJson: '{"tasks":[]}', expiresAt: new Date(Date.now() + 86_400_000) },
+  });
+  expect(legacy.opportunityId).toBeNull();
+  await prisma.session.delete({ where: { id: session.id } });
+  expect(await prisma.adviserFeedback.count({ where: { opportunityId: opportunity.id } })).toBe(0);
+});
+
+it('stores check-ins and applies only reviewed current guidance while retaining completed tasks', async () => {
+  const token = 'checkin-owner';
+  const session = await prisma.session.create({
+    data: { cookieToken: token, opportunities: { create: {
+      title: 'Check-in plan', category: 'upskilling', summary: 'Summary', reasoning: 'Reasoning', feasibilityScore: 75, rank: 1,
+      planItems: { create: [
+        { title: 'Complete foundation', description: 'Keep this guidance', day: 1, week: 1,
+          progressEntry: { create: { isCompleted: true, completedAt: new Date('2026-11-01') } } },
+        { title: 'Practice reporting', description: 'Original practice guidance', day: 8, week: 2 },
+      ] },
+    } } },
+    include: { opportunities: { include: { planItems: true } } },
+  });
+  const opportunity = session.opportunities[0];
+  const unfinished = opportunity.planItems.find((task) => task.title === 'Practice reporting')!;
+  const cookie = 'restart_sid=' + token;
+  const root = '/api/support';
+  const input = { opportunityId: opportunity.id, requestId: '2d173cc9-84a4-49d6-9fd4-66ccbb96d113',
+    completedWork: 'Completed the introductory module', blockers: 'Limited study time',
+    hours: 2, budget: 0 };
+  expect((await request(app).post(root + '/check-ins').set('Cookie', cookie).send({ ...input, hours: 0 })).status).toBe(400);
+  expect((await request(app).post(root + '/check-ins').set('Cookie', 'restart_sid=other-worker').send(input)).status).toBe(403);
+  const saved = await request(app).post(root + '/check-ins').set('Cookie', cookie).send(input);
+  expect(saved.status).toBe(201);
+  const retry = await request(app).post(root + '/check-ins').set('Cookie', cookie).send(input);
+  expect(retry.body.id).toBe(saved.body.id);
+  expect((await request(app).get(root + '/check-ins?opportunityId=' + opportunity.id).set('Cookie', cookie)).body).toHaveLength(1);
+  expect((await request(app).get(root + '/check-ins?opportunityId=' + opportunity.id)
+    .set('Cookie', 'restart_sid=other-worker')).body).toEqual([]);
+
+  const path = root + '/check-ins/' + saved.body.id + '/refine';
+  expect((await request(app).post(path).set('Cookie', 'restart_sid=other-worker').send({})).status).toBe(404);
+  const preview = await request(app).post(path).set('Cookie', cookie).send({});
+  expect(preview.status).toBe(200);
+  expect(preview.body.refined.planItems.find((task: { id: string }) => task.id === unfinished.id).description).toContain('Use free resources');
+  expect((await prisma.planItem.findUniqueOrThrow({ where: { id: unfinished.id } })).description).toBe('Original practice guidance');
+  await prisma.planItem.update({ where: { id: unfinished.id }, data: { description: 'A concurrent edit' } });
+  expect((await request(app).post(path).set('Cookie', cookie).send({ revision: preview.body.revision })).status).toBe(409);
+  const fresh = await request(app).post(path).set('Cookie', cookie).send({});
+  const applied = await request(app).post(path).set('Cookie', cookie).send({ revision: fresh.body.revision });
+  expect(applied.status).toBe(200);
+  expect((await request(app).post(path).set('Cookie', cookie).send({ revision: fresh.body.revision })).status).toBe(200);
+  const completed = await prisma.planItem.findFirstOrThrow({
+    where: { opportunityId: opportunity.id, title: 'Complete foundation' }, include: { progressEntry: true },
+  });
+  expect(completed.description).toBe('Keep this guidance');
+  expect(completed.progressEntry?.completedAt).toEqual(new Date('2026-11-01'));
+  const history = await request(app).get(root + '/check-ins?opportunityId=' + opportunity.id).set('Cookie', cookie);
+  expect(history.body[0].appliedAt).not.toBeNull();
+  expect(history.text).not.toContain('appliedRevision');
+  await prisma.session.delete({ where: { id: session.id } });
+  expect(await prisma.weeklyCheckIn.count({ where: { opportunityId: opportunity.id } })).toBe(0);
 });

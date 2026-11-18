@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, expect, it, vi } from 'vitest';
 import { JobPostingComparison } from '../components/JobPostingComparison';
 import { compareJob, addJobAction } from '../lib/api';
-import type { Opportunity } from '@restart-ai/shared';
+import type { Opportunity } from '@talivoy/shared';
 
 vi.mock('../lib/api', () => ({ compareJob: vi.fn(), addJobAction: vi.fn() }));
 afterEach(() => {
