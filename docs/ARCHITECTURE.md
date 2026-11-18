@@ -39,6 +39,31 @@ with Secure enabled in production, and never returned as a JSON field. There is 
 Fictional seeded personas are publicly readable through a whitelist of persona IDs. Public seed tokens cannot authenticate live API requests.
 Demo state remains in memory separately from a live session and has a bundled mock fallback.
 
+## Job posting comparison
+
+The worker reviews career details, pastes a posting and submits both to the configured provider through `/api/job-comparison`. Shared Zod schemas bound inputs and outputs. The server checks quoted evidence against each supplied text and returns matches, questions and one proposed action.
+
+Live comparisons verify opportunity ownership. Saving the reviewed action verifies a signed authorization bound to the guest and checks ownership again inside a transaction. A deterministic task ID gives retries the same milestone record, including existing progress. The action is placed in Week 4, day 30. Its signing key is held in process memory and its authorization lasts 30 minutes. Demo actions stay in demo client state.
+
+## Reminders and calendar events
+
+A `MilestoneReminder` belongs to a `PlanItem` through a unique milestone ID. The API saves a future UTC due time after checking guest ownership. The dashboard accepts local date/time input and shows due reminders for unfinished tasks in the focused opportunity. It refreshes its due-time calculation every 30 seconds.
+
+Calendar export generates an ICS event with a stable reminder UID, UTC start time and display alarm. Workers import the event into their calendar for notification delivery. Removing an app reminder requires a separate removal from an external calendar.
+
+## Adviser review snapshots
+
+An `AdviserShare` belongs to a `Session`. Creation loads the owned opportunity in a transaction, validates selected task IDs and serializes the chosen title, summary, reasoning and milestones with their descriptions. Completion status is optional. Each snapshot expires after 1, 7 or 30 days.
+
+The server returns a random 32-byte token once and stores its SHA-256 hash. The client places the token in the link fragment. The adviser page posts that token in the body to `/api/support/adviser-review/read` and renders the chosen snapshot. It opens without a worker guest cookie. Guest ownership is required to list or revoke shares. Expiry and revocation deny subsequent reads. Recipients can retain previously copied content.
+
+## Other implemented flows
+
+- Adviser PDF export reloads saved live progress before rendering the printable report.
+- Plan refinement applies shared TypeScript time/budget guidance to unfinished tasks after a reviewed revision check.
+- Public evaluations live in `Evaluation` after publication consent. Public responses show self-reported reviewer details and answers and omit the reviewer code.
+- The About page describes the app and stakeholders. Footer contact uses the configured email or the project's GitHub issues page.
+
 ## Development and production
 
 Vite on 5173 proxies `/api` to Express on 3001. Production Express serves `client/dist` and a non-API SPA fallback.
@@ -48,7 +73,7 @@ The production runtime uses tsx and requires installed development dependencies.
 ## Boundaries of verification
 
 Vitest route tests simulate model and hosted Docling responses, and résumé tests exercise local PDF extraction. A disposable SQLite integration test verifies actual
-schema setup, persistence, ownership and deletion. No test establishes a live provider connection or a production database migration. Coverage is a useful regression measure, not proof of correctness.
+schema setup, persistence, ownership and deletion. Automated tests use simulated provider calls and a disposable database. Separate fictional live smoke checks verified résumé interpretation and job comparison. Public hosting and production migration verification remain pending. Coverage is a useful regression measure, not proof of correctness.
 The user has manually exercised navigation, restored progress, demo separation, and streak behavior in the local application.
 
 ## Version-1 explanation boundary
@@ -58,3 +83,12 @@ so the API and explanation panel use identical normalization and weights. `serve
 and validates the persisted envelope. The UI never accepts a model-supplied final score or raw HTML.
 The synthetic demo builder constructs consistent, explicitly fictional inputs matching its sample scores.
 Schema application adds a nullable column and preserves existing opportunity and progress records.
+
+
+## Verification of recent storage behavior
+
+SQLite integration checks cover reminder updates, cross-guest denial, selected snapshot disclosure, expiry, revocation and cascading deletion. Calendar tests cover UTC conversion, escaping and line folding. Component tests exercise deliberate submission and the shared snapshot view.
+
+## Proposed extensions
+
+Private responses from advisers on the shared review page and weekly worker check-ins remain proposed. Implementation should define response storage, worker access, self-reported adviser identity and explicit review of suggested plan changes.

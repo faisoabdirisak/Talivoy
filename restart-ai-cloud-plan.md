@@ -294,7 +294,7 @@ estimated startup cost, risks, assumptions, and questions to verify. AI inputs a
 Versioned explanation JSON is saved on new opportunities and restored with the guest session.
 One nullable database column preserves compatibility: old results show explanation unavailable, and missing costs remain unknown.
 The local database was backed up before the additive schema application; all existing row counts were preserved.
-Adviser export, plan refinement, usefulness evaluation, and public deployment remain future priorities, not part of this change.
+At this historical milestone, adviser export, refinement, evaluation and deployment were subsequent priorities. Current implementation and remaining work are recorded below.
 
 Verification: 138 tests (26 shared, 75 server, 37 client); lint and workspace typechecks pass.
 Server coverage: 95.26% lines, 93.38% branches, above the 80% gate. Production build passes.
@@ -305,3 +305,54 @@ Restart the backend after Prisma regeneration. Review/commit/push and a fresh Gi
 Explanation layout refinement: explanations now open in a full-screen overlay rendered outside the card grid, with Back, Close, Escape, focus trapping/restoration, and independent scrolling. Opening one explanation no longer stretches neighboring cards.
 
 Explanation visual polish: gradient overview and fit ring, icon-led estimate cards, accessible score bars, risk/assumption/question cards, section-jump buttons, and a return action. Responsive layouts preserve the full-screen popup and keyboard focus behavior.
+
+## Worker follow-through improvements — 18 November 2026
+
+- [x] Compare a confirmed career profile with a pasted job posting and review evidence quotes and questions.
+- [x] Add the reviewed job-comparison action to Week 4 with retry-safe saving.
+- [x] Save milestone reminders with local-time entry, UTC storage, dashboard notices and ICS calendar export.
+- [x] Choose plan details for an adviser snapshot, preview them, create an expiring read link, and revoke access from the guest session.
+- [x] Check real SQLite persistence, guest ownership, selected-field disclosure, expiry, revocation and cascading deletion.
+- [ ] Verify calendar notifications on the worker's chosen calendar application.
+- [ ] Publish and test a public HTTPS adviser link with a remote reviewer.
+
+
+## Current feature record — 18 November 2026
+
+| Area | Current behavior | Verification and remaining work |
+| --- | --- | --- |
+| Development approach | IBM Bob was the primary AI development assistant, with Faiso directing and testing the project. | README records the tool roles. |
+| Providers | Granite through watsonx.ai or Gemini through server configuration. | Provider boundaries simulated in tests; separate fictional live interpretation and comparison checks succeeded. |
+| Résumé intake | Entry choice, deliberate analysis, editable role/location/skills/experience/education/interests and confirmation. | Hosted Docling hit a storage failure; local extraction plus live interpretation worked. Hosted success tested with simulated responses. |
+| Adviser handoff | Printable report from selected opportunity and saved progress. | Implemented locally. |
+| Plan refinement | Reviewed time/budget guidance with a saved-plan revision check. | Implemented locally. |
+| Public evaluation | Publication-consented live/demo feedback with self-reported reviewer information. | Stored independently of guest sessions. |
+| Job comparison | Quoted matches, requirements to check and a reviewed additional Week 4 milestone. | Live fictional comparison and ownership/retry tests passed. |
+| Reminders | Guest-owned dates, dashboard notices and ICS export. | Persistence/format checked; actual calendar alerts need acceptance. |
+| Adviser links | Field selection, preview, expiry, public snapshot read and guest revocation. | SQLite isolation/disclosure/expiry/revocation checked; public remote testing remains pending. |
+| About and contact | App/stakeholder explanation and footer email/GitHub contact. | Implemented in the interface. |
+
+Recorded implementation checks covered 26 shared, 94 server and 51 client tests across package runs and the corrected targeted client rerun. Lint, type checking and production build passed. Server coverage at that check was 92.71% statements, 87.66% branches, 98.80% functions and 93.62% lines. A new GitHub Actions run remains a release check after pushing.
+
+## Proposed next development
+
+### Private adviser feedback on a shared plan
+
+Status is proposed. An adviser would submit a name, self-reported role, practicality assessment, milestone suggestion and next step from the shared page. The worker would read responses privately and choose changes to apply.
+
+Implementation needs a response schema, storage linked to the share, expiry/revocation-aware submission, worker-owned retrieval, an adviser form and explicit review of plan changes. The current shared page reads snapshots.
+
+### Weekly check-ins
+
+Status is proposed. Workers would record completed work, blockers and changes to time or budget, then review suggested adjustments.
+
+Implementation needs a check-in schema, worker-owned create/read routes, history, adjustment preview and tests protecting completed progress. The current manual refinement tool provides the existing time/budget flow.
+
+## Documentation map
+
+- `README.md` explains journeys, IBM tools, setup, feature usage and proposed work.
+- `docs/ARCHITECTURE.md` explains ownership, models, providers, reminders and sharing.
+- `docs/API.md` records implemented routes, limits and responses.
+- `docs/SECURITY.md` records access controls, shared/public data and retention.
+- `docs/DEPLOYMENT.md` covers schema updates, restart and remote acceptance.
+- `docs/CONTRIBUTING.md` records verification and manual checks.

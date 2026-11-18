@@ -1,6 +1,6 @@
-# ST-5 route security review
+# Route security review
 
-Reviewed locally on 6 November 2026. This is a source review and automated regression exercise, not an independent penetration test or security certification.
+The initial ST-5 review was recorded on 6 November 2026. This document was extended on 18 November 2026 with recent feature controls and regression evidence.
 
 ## Route-by-route result
 
@@ -13,6 +13,14 @@ Reviewed locally on 6 November 2026. This is a source review and automated regre
 | PATCH /api/sessions/me/select | Body validation, opportunity ownership, null selection, DB rejection | Owned selections only; invalid/stale storage failures safely returned |
 | DELETE /api/sessions/me | Token-scoped lookup, cascade delete, cookie clearing, origin gate, failure behavior | No other-session ID accepted; failed deletion no longer silently clears client state |
 | POST /api/sessions/demo | Persona whitelist, token projection, read-only route, live-cookie preservation | Public fictional data only; no Set-Cookie or writes; public seed credentials blocked on live routes |
+| POST /api/resume | Upload limit, MIME/signature checks, bounded draft and Docling/local fallback | Worker reviews extracted and model-suggested fields |
+| POST /api/job-comparison | Input/output bounds, live ownership and quoted evidence checks | Unsupported quoted evidence rejected |
+| POST /api/job-comparison/action | Signed action, owner binding, expiry, transactional ownership and deterministic task ID | Tampering and other-guest replay denied; retries preserve progress |
+| /api/support/reminders | Guest ownership, future timestamp and milestone-scoped updates/deletion | Other guests cannot read or change reminders |
+| /api/support/adviser-shares | Guest ownership, selected-task validation, field projection and expiry options | Selected fields enter the snapshot; listing omits tokens |
+| POST /api/support/adviser-review/read | Random-token hash lookup, expiry and no-store policy | Expired/revoked links denied; only chosen snapshot returned |
+| POST /api/sessions/me/refine | Guest ownership, bounded constraints and revision check | Changed plans require another preview |
+| /api/evaluations | Publication consent, bounded answers, live ownership or demo persona, submission limit | Public projection omits reviewer code; identity self-reported |
 | Unknown /api routes | Production SPA boundary | JSON 404 instead of index.html |
 
 ## Common protections and fixes
@@ -33,10 +41,18 @@ Reviewed locally on 6 November 2026. This is a source review and automated regre
 - Repeated valid analysis creates a new saved session; old sessions need an eventual retention policy.
 - An IP rate limiter is not a global provider-spend cap. Proxy configuration and shared limiting need deployment-specific review.
 - Prompt injection and misleading suggestions remain possible; schema validation and fixed scoring weights do not prove factual accuracy.
-- Provider calls have no application-specific deadline/cancellation policy yet. Resource availability and cost/risk estimates are not independently verified.
+- Granite and Docling adapters use request timeouts. Cancellation across the full browser/server/provider workflow and provider-spend controls remain follow-up work. Resource availability and cost/risk estimates require independent verification.
 - New opportunities save bounded, validated cost/risk estimates, assumptions, questions and scoring signals in versioned explanation text. These can repeat profile details and are protected by the same guest access checks. Old rows remain without explanations. Scores are not success probabilities.
 - SQLite concurrency, backups, production HTTPS, migrations, hosting, and dependency monitoring require operational work.
 - No independent accessibility review, external penetration test, or deployed end-to-end assessment is claimed.
+
+## Shared, public and retained data
+
+A share token is an expiring bearer credential. Anyone holding it can read the chosen snapshot until expiry or revocation. It travels in a link fragment and POST body. The database stores its hash. Revocation controls subsequent reads, while recipients can keep copies of received content.
+
+Reminders cascade with milestone deletion. Shares cascade with guest-session deletion. Expired shares are denied on read; automated deletion of expired rows remains pending. Public evaluations are independent records and remain after guest deletion. Reviewer names, roles, affiliations and answers are public after consent. Reviewer codes are stored and omitted from public responses.
+
+Calendar export puts selected task content into a calendar file. Notification settings and imported copies are controlled in the worker's calendar. Automatic email and push delivery would require a separate implementation.
 
 ## Reproduce checks
 

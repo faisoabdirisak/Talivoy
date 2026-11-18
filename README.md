@@ -30,6 +30,12 @@ Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the prima
 - View dashboard completion and a UTC-calendar-day activity streak.
 - Try Maria, James, and Aisha's fictional demo profiles without a live recommendation request.
 - Navigate and refresh without losing saved results; deliberately delete the session with Start over.
+- Print a transition plan for adviser handoff and preview time/budget adjustments before applying them.
+- Compare skills with a pasted job posting and review a suggested additional milestone.
+- Save milestone reminders and download calendar events for notification delivery.
+- Choose plan details for an expiring adviser review link and revoke the link from the guest session.
+- Submit publication-consented evaluations for live or fictional demo opportunities.
+- Read the About page and use the footer contact link.
 
 Feasibility scores are **fit scores out of 100, not success probabilities or task completion percentages**.
 TypeScript applies fixed weights to bounded AI-generated signals. Those inputs still depend on model judgment.
@@ -123,6 +129,51 @@ See [deployment instructions](docs/DEPLOYMENT.md). No public deployment is creat
 - New analyses save a validated version-1 explanation with estimated costs, risks, assumptions, verification questions, and scoring signals. Older saved opportunities remain intact and show explanation unavailable. Missing estimates remain unknown rather than being replaced with zero.
 - SQLite on one persistent instance is the prototype deployment model, not a horizontally scaled service.
 - The separate `gemini-test` folder is outside this application and must not be included in its repository.
+
+## Compare your skills with a job posting
+
+On the Dashboard, choose **Focus** on an opportunity, then open **Compare a job**. Review your skills, role, experience and qualifications and paste the job posting. Click **Compare My Skills** to send those details to the configured AI provider.
+
+The result shows supported matches with quotes from both inputs, requirements to discuss or build, and one proposed action. The server checks that evidence quotes occur in the supplied text. Review the action, then choose **Add to My 30-Day Plan** to save it as a Week 4 milestone. Completed tasks retain their progress. Retrying the same saved action reuses its task record.
+
+Profile details entered during the current visit can prefill the comparison. After refresh, enter the relevant details again because the original profile is held in browser memory. Fictional demo comparisons require a fictional profile and keep added actions in the current demo tab.
+
+Suggestions remain AI estimates, and employer requirements and job availability need verification. A comparison authorization expires after 30 minutes or a server restart. If saving fails after that, run the comparison again.
+
+## Milestone reminders and adviser review links
+
+On the Dashboard, focus an opportunity to open **Milestone reminders** and **Career adviser review link**.
+
+Choose an unfinished milestone and a local date/time, then save a reminder. The app stores it with the guest plan and shows due reminders on the focused dashboard. **Download calendar reminder** creates an ICS file that can be imported into a calendar for alerts while the app is closed. Calendar notification settings control delivery. Removing an app reminder requires deleting any imported calendar event separately. These reminders use in-app notices and calendar events.
+
+For adviser review, select the title, summary, reasoning and individual milestones you wish to share. Completion status is optional. The preview displays the selected content before **Create Review Link** saves a snapshot. Links expire after seven days by default, with one-day and 30-day options. Anyone holding a link can read its snapshot. Workers can revoke active links from their guest session, and deleting the guest session removes its shares. A shared snapshot stays as it was when created.
+
+Review links use the current app origin. A localhost link works on the same computer; sharing with remote advisers requires a public deployment. Demo plans offer the existing printable report, while persistent reminders and share links use live guest plans.
+
+Existing installations need to regenerate Prisma Client and apply the additive schema changes before starting the updated server.
+
+```powershell
+npm run db:push --workspace=server
+```
+
+Back up the database before applying the schema. The new tables are `MilestoneReminder` and `AdviserShare`.
+
+## Adviser handoff, refinement and evaluations
+
+The focused opportunity offers **Print / Save as PDF** with the opportunity, explanation and milestone progress. Live reports first reload the saved selection and progress. Printing or saving the preview lets the worker share it through their preferred channel.
+
+Plan View offers a refinement preview using the worker's total budget and available weekly hours. Applying a preview updates guidance for remaining milestones. Completed milestones keep their progress. The adjustment uses shared TypeScript rules for time allocation and cost guidance. A saved-plan revision check asks for a new preview if the plan changed in the meantime.
+
+The Evaluation page publishes submitted usefulness feedback after explicit publication consent. The form records the reviewer's name, self-reported role and affiliation, fit/usefulness answers, suggested next step and comments. Visitors can read published feedback. The reviewer code is stored and omitted from public responses. Public evaluations remain in their own table when a guest session is deleted.
+
+## Proposed next features
+
+| Feature | Proposed worker journey | Status |
+| --- | --- | --- |
+| Private adviser feedback on a shared plan | Adviser submits a name, self-reported role, practicality assessment, milestone suggestion and next step. The worker reviews responses privately and chooses any changes to apply. | Proposed |
+| Weekly check-ins | Worker records progress, blockers and changes to time or budget, then reviews proposed plan adjustments. | Proposed |
+
+The current adviser link displays the chosen snapshot. Its page and API support reading that snapshot. The existing Evaluation page provides the implemented public feedback workflow.
 
 ## Project references
 

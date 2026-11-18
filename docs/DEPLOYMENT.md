@@ -30,3 +30,29 @@ Use the same public origin for UI and API so the Strict cookie works. Existing d
 - Backups, account recovery, automatic session expiry/deletion, and service-level guarantees are not implemented.
 - Helmet's default content policy may block external Google Fonts; system font fallback is available. Review external assets before changing the policy.
 - There is no automated deploy job or tested hosting configuration in CI. Choose and verify a hosting service separately.
+
+
+## Updating an existing installation
+
+Back up SQLite and stop the development server before applying schema changes. On Windows, a running Prisma process can lock the query-engine DLL during client generation. Apply the schema and start one server instance.
+
+```powershell
+npm run db:push --workspace=server
+npm run dev --workspace=server
+```
+
+The support features add `MilestoneReminder` and `AdviserShare` tables. The additive changes were checked with a backed-up local database and disposable SQLite integration tests. Set the database environment for deployment commands and keep a production backup/release process.
+
+If `EADDRINUSE` reports port 3001, identify the listening application and stop that instance before starting another. The backend health endpoint can confirm an existing server responds.
+
+## Reminder and sharing acceptance
+
+1. Save a reminder, refresh and confirm its local display time.
+2. Import the ICS event into the chosen calendar and verify its actual alert settings.
+3. Create a snapshot from selected details and open its link without the worker cookie.
+4. Confirm omitted details are absent, revoke the link and verify another read is denied.
+5. Repeat the link check on the deployed HTTPS origin with a remote reviewer.
+
+A localhost link identifies the viewer's own computer. Remote review requires a reachable deployed origin. Workers choose how to send generated links. Dashboard notices require the app to be open, and calendar alerts require importing the event. Actual calendar delivery and public remote review remain acceptance checks.
+
+Job-comparison action authorizations use a process-memory signing key, so a restart invalidates pending actions. Existing adviser snapshots remain readable until database expiry or revocation, subject to storage availability.

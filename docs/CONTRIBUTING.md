@@ -13,7 +13,7 @@ Do not change the separate `gemini-test` folder or commit credentials, SQLite fi
 5. Keep docs and the existing plan accurate. Do not mark public deployment complete without a real verified deployment.
 
 Server coverage must meet 80% aggregate statements, branches, functions, and lines across all `server/src` production code.
-Do not lower thresholds or exclude difficult modules merely to pass CI. Mock Gemini and the SDK in automated tests.
+Do not lower thresholds or exclude difficult modules merely to pass CI. Simulate Granite, Gemini and hosted Docling boundaries in automated tests. Use fictional data for separate live smoke checks.
 Most route tests mock Prisma; `server/src/persistence.test.ts` also checks a disposable real SQLite database. Extend these checks when persistence behavior or migrations change.
 Never test destructive schema changes against the user's development database.
 
@@ -24,6 +24,20 @@ Select an opportunity, complete tasks, refresh and reopen the same host in the s
 Switch demo personas and exit demo; the live results should remain unchanged. Confirm demo tasks do not mutate shared seed records.
 Test Start over only on a disposable guest session. Check mobile layout and keyboard access before a submission.
 Fit scores are not completion percentages; confirm the lower task progress changes on completion.
+
+## Acceptance checks for recent features
+
+- Choose manual entry and verify résumé controls collapse. Choose a file and verify selection sends no request. Analyze, review the draft and confirm it before recommendations.
+- Verify role, location, skills, education, stated experience and interests when present in the résumé. Check missing-field guidance.
+- Focus a saved opportunity, compare a fictional job posting, review quotes/questions and deliberately add an action. Retry saving to check task identity and progress.
+- Create a reminder in local time, refresh and export it. Verify the imported event time and alert in the chosen calendar.
+- Preview selected adviser details, create a link and open it without the worker cookie. Verify omitted details, expiry and revocation.
+- Submit fictional evaluation feedback with publication consent and check its public fields.
+- Preview and apply time/budget refinement. Verify completed-task progress and stale-preview handling.
+
+SQLite integration tests cover support-feature ownership, snapshot disclosure, expiry, revocation and cascading deletion. Calendar tests cover UTC conversion, escaping and folding. Component tests cover deliberate submission, selection and the shared view.
+
+Record verification dates and scope while retaining earlier stage records as history. Private adviser responses and weekly check-ins remain proposed until implemented and verified.
 
 ## Commit examples
 
