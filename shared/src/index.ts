@@ -201,3 +201,5 @@ export { OpportunityExplanationSchema, ScoringSignalsSchema, calculateScoreBreak
 export { RefinementConstraints, refineRemainingTasks } from './refinement.js';
 
 export { EvaluationInputSchema, type EvaluationInput, type PublicEvaluation } from './evaluation.js';
+export { JobComparisonInputSchema, JobComparisonSchema, type JobComparison, type JobComparisonInput, type JobComparisonResult } from './jobComparison.js';
+export { ReminderInputSchema, AdviserShareInputSchema, AdviserSnapshotSchema, type AdviserSnapshot, type AdviserShareInput, type MilestoneReminder, type AdviserShare } from './workerSupport.js';

@@ -154,3 +154,31 @@ export function submitEvaluation(input: import('@restart-ai/shared').EvaluationI
     body: JSON.stringify(input),
   });
 }
+import type { JobComparisonInput, JobComparisonResult, PlanItem } from '@restart-ai/shared';
+
+export function compareJob(input: JobComparisonInput) {
+  return apiFetch<JobComparisonResult>('/api/job-comparison', {
+    method: 'POST', body: JSON.stringify(input),
+  });
+}
+
+export function addJobAction(opportunityId: string, result: JobComparisonResult) {
+  const authorization = JSON.parse(result.actionToken ?? '{}') as { token: string; expires: number };
+  return apiFetch<PlanItem>('/api/job-comparison/action', {
+    method: 'POST', body: JSON.stringify({ ...authorization, opportunityId, ...result.action }),
+  });
+}
+
+import type { AdviserShare, AdviserShareInput, AdviserSnapshot, MilestoneReminder } from '@restart-ai/shared';
+
+export const listReminders = () => apiFetch<MilestoneReminder[]>('/api/support/reminders', { method: 'GET' });
+export const saveReminder = (planItemId: string, dueAt: string) =>
+  apiFetch<MilestoneReminder>('/api/support/reminders', { method: 'POST', body: JSON.stringify({ planItemId, dueAt }) });
+export const removeReminder = (id: string) => apiFetch<void>('/api/support/reminders/' + encodeURIComponent(id), { method: 'DELETE' });
+export const listAdviserShares = () => apiFetch<AdviserShare[]>('/api/support/adviser-shares', { method: 'GET' });
+export const createAdviserShare = (input: AdviserShareInput) =>
+  apiFetch<AdviserShare & { token: string }>('/api/support/adviser-shares', { method: 'POST', body: JSON.stringify(input) });
+export const revokeAdviserShare = (id: string) =>
+  apiFetch<void>('/api/support/adviser-shares/' + encodeURIComponent(id), { method: 'DELETE' });
+export const readAdviserShare = (token: string) =>
+  apiFetch<{ snapshot: AdviserSnapshot; expiresAt: string }>('/api/support/adviser-review/read', { method: 'POST', body: JSON.stringify({ token }) });

@@ -134,3 +134,88 @@ it('seeds distinct persona plans idempotently without changing live guest record
     expect(await prisma.session.findUnique({ where: { id: session.id }, include: { opportunities: true } })).toEqual(session);
   }
 }, 30_000);
+
+it('persists reminders and shares only selected plan details through an expiring revocable link', async () => {
+  const ownerToken = 'worker-support-owner';
+  const otherToken = 'worker-support-other';
+  const session = await prisma.session.create({
+    data: {
+      cookieToken: ownerToken,
+      opportunities: { create: {
+        title: 'Private opportunity title', category: 'career-pivot', summary: 'Private summary',
+        reasoning: 'Private reasoning', feasibilityScore: 80, rank: 1,
+        planItems: { create: [
+          { title: 'Shared milestone', description: 'Shared instructions', day: 7, week: 1,
+            progressEntry: { create: { isCompleted: true, completedAt: new Date() } } },
+          { title: 'Unshared milestone', description: 'Private task description', day: 14, week: 2 },
+        ] },
+      } },
+    },
+    include: { opportunities: { include: { planItems: true } } },
+  });
+  const opportunity = session.opportunities[0];
+  const task = opportunity.planItems.find((item) => item.title === 'Shared milestone')!;
+  const cookie = 'restart_sid=' + ownerToken;
+  const path = '/api/support';
+  const future = new Date(Date.now() + 86_400_000).toISOString();
+
+  expect((await request(app).post(path + '/reminders').send({ planItemId: task.id, dueAt: future })).status).toBe(401);
+  expect((await request(app).post(path + '/reminders').set('Cookie', cookie)
+    .send({ planItemId: task.id, dueAt: new Date(0).toISOString() })).status).toBe(400);
+  expect((await request(app).post(path + '/reminders').set('Cookie', 'restart_sid=' + otherToken)
+    .send({ planItemId: task.id, dueAt: future })).status).toBe(403);
+  const reminder = await request(app).post(path + '/reminders').set('Cookie', cookie)
+    .send({ planItemId: task.id, dueAt: future });
+  expect(reminder.status).toBe(200);
+  const updated = await request(app).post(path + '/reminders').set('Cookie', cookie)
+    .send({ planItemId: task.id, dueAt: new Date(Date.now() + 172_800_000).toISOString() });
+  expect(updated.body.id).toBe(reminder.body.id);
+  expect((await request(app).get(path + '/reminders').set('Cookie', cookie)).body).toHaveLength(1);
+  expect((await request(app).get(path + '/reminders').set('Cookie', 'restart_sid=' + otherToken)).body).toEqual([]);
+
+  const selection = { opportunityId: opportunity.id, includeTitle: false, includeSummary: false,
+    includeReasoning: false, includeProgress: false, taskIds: [task.id], expiresInDays: 7 };
+  expect((await request(app).post(path + '/adviser-shares').set('Cookie', cookie)
+    .send({ ...selection, taskIds: ['foreign-task'] })).status).toBe(403);
+  expect((await request(app).post(path + '/adviser-shares').set('Cookie', cookie)
+    .send({ ...selection, taskIds: [] })).status).toBe(400);
+  const created = await request(app).post(path + '/adviser-shares').set('Cookie', cookie).send(selection);
+  expect(created.status).toBe(201);
+  expect(created.body.token).toMatch(/^[a-f0-9]{64}$/);
+  const stored = await prisma.adviserShare.findUniqueOrThrow({ where: { id: created.body.id } });
+  expect(stored.tokenHash).not.toBe(created.body.token);
+  expect(stored.snapshotJson).not.toContain('Private');
+
+  const read = await request(app).post(path + '/adviser-review/read').send({ token: created.body.token });
+  expect(read.status).toBe(200);
+  expect(read.body.snapshot).toEqual({
+    tasks: [{ title: 'Shared milestone', description: 'Shared instructions', day: 7, week: 1 }],
+  });
+  expect(read.text).not.toContain('cookieToken');
+  expect(read.text).not.toContain('isCompleted');
+  expect(read.headers['cache-control']).toBe('no-store');
+  const list = await request(app).get(path + '/adviser-shares').set('Cookie', cookie);
+  expect(list.body).toHaveLength(1);
+  expect(list.text).not.toContain(created.body.token);
+  expect((await request(app).get(path + '/adviser-shares').set('Cookie', 'restart_sid=' + otherToken)).body).toEqual([]);
+  await request(app).delete(path + '/adviser-shares/' + created.body.id).set('Cookie', 'restart_sid=' + otherToken);
+  expect((await request(app).post(path + '/adviser-review/read').send({ token: created.body.token })).status).toBe(200);
+
+  await prisma.adviserShare.update({ where: { id: created.body.id }, data: { expiresAt: new Date(0) } });
+  expect((await request(app).post(path + '/adviser-review/read').send({ token: created.body.token })).status).toBe(404);
+  expect((await request(app).post(path + '/adviser-review/read').send({ token: 'invalid' })).status).toBe(404);
+  const second = await request(app).post(path + '/adviser-shares').set('Cookie', cookie)
+    .send({ ...selection, includeTitle: true, includeSummary: true, includeReasoning: true, includeProgress: true });
+  const fullRead = await request(app).post(path + '/adviser-review/read').send({ token: second.body.token });
+  expect(fullRead.body.snapshot.title).toBe(opportunity.title);
+  expect(fullRead.body.snapshot.tasks[0].isCompleted).toBe(true);
+  await request(app).delete(path + '/adviser-shares/' + second.body.id).set('Cookie', cookie);
+  expect((await request(app).post(path + '/adviser-review/read').send({ token: second.body.token })).status).toBe(404);
+
+  await request(app).delete(path + '/reminders/' + reminder.body.id).set('Cookie', 'restart_sid=' + otherToken);
+  expect((await request(app).get(path + '/reminders').set('Cookie', cookie)).body).toHaveLength(1);
+  await request(app).delete(path + '/reminders/' + reminder.body.id).set('Cookie', cookie);
+  expect((await request(app).get(path + '/reminders').set('Cookie', cookie)).body).toEqual([]);
+  await prisma.session.delete({ where: { id: session.id } });
+  expect(await prisma.adviserShare.count({ where: { sessionId: session.id } })).toBe(0);
+});

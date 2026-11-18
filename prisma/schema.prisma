@@ -20,6 +20,7 @@ model Session {
   /// The opportunity the user has selected to focus on (null = none selected)
   selectedOpportunityId String?
   opportunities         Opportunity[]
+  adviserShares         AdviserShare[]
 }
 
 model Opportunity {
@@ -48,6 +49,7 @@ model PlanItem {
   description    String?
   resourceUrl    String?
   progressEntry  ProgressEntry?
+  reminder       MilestoneReminder?
 }
 
 model ProgressEntry {
@@ -76,4 +78,21 @@ model Evaluation {
   friction         String
 
   @@index([createdAt])
+}
+
+model MilestoneReminder {
+  id         String   @id @default(cuid())
+  planItemId String   @unique
+  planItem   PlanItem @relation(fields: [planItemId], references: [id], onDelete: Cascade)
+  dueAt      DateTime
+}
+
+model AdviserShare {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  tokenHash   String   @unique
+  snapshotJson String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
 }

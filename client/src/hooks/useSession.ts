@@ -43,6 +43,7 @@ export interface UseSessionReturn {
   submitProfile: (data: AnalyzeRequest) => Promise<void>;
   togglePlanItem: (itemId: string, completed: boolean) => Promise<void>;
   selectOpp: (id: string | null) => Promise<void>;
+  addJobAction: (opportunityId: string, item: Opportunity['planItems'][number]) => void;
   applyRefinement: (opportunity: Opportunity) => void;
   startDemo: (personaId: string) => void;
   stopDemo: () => void;
@@ -253,6 +254,13 @@ export function useSession(): UseSessionReturn {
     lastFormValues,
     submitProfile,
     togglePlanItem,
+    addJobAction: (opportunityId, item) => {
+      setOpportunities((current) => current.map((opportunity) =>
+        opportunity.id === opportunityId
+          ? { ...opportunity, planItems: [...opportunity.planItems.filter((task) => task.id !== item.id), item] }
+          : opportunity
+      ));
+    },
     applyRefinement: (refined) => {
       const guidance = new Map(refined.planItems.map((item) => [item.id, item.description]));
       setOpportunities((current) => current.map((item) => item.id === refined.id ? {

@@ -1,3 +1,7 @@
+import { MilestoneReminders } from './components/MilestoneReminders';
+import { AdviserReviewLink } from './components/AdviserReviewLink';
+import { AdviserReviewPage } from './components/AdviserReviewPage';
+import { JobPostingComparison } from './components/JobPostingComparison';
 import { AboutPage } from './components/AboutPage';
 import { OpportunityComparison } from './components/OpportunityComparison';
 import { LecturerFeedback } from './components/LecturerFeedback';
@@ -42,6 +46,7 @@ function AppContent() {
     submitProfile,
     togglePlanItem,
     applyRefinement,
+    addJobAction,
     selectOpp,
     startDemo,
     stopDemo,
@@ -229,6 +234,7 @@ function AppContent() {
                   </div>
                 </div>
               ) : opportunities.length > 0 ? (
+                <>
                 <DashboardPreview
                   opportunities={opportunities}
                   selectedOpportunityId={selectedOpportunityId}
@@ -238,6 +244,22 @@ function AppContent() {
                   onSelectOpp={selectOpp}
                   onStartOver={startOver}
                 />
+                {opportunities.filter((item) => item.id === selectedOpportunityId).map((opportunity) => (
+                  <div key={`${demoActive}-${opportunity.id}`} className="space-y-6">
+                    <MilestoneReminders opportunity={opportunity} demo={demoActive} />
+                    <AdviserReviewLink opportunity={opportunity} demo={demoActive} />
+                  <JobPostingComparison
+                    key={`${demoActive}-${opportunity.id}`}
+                    opportunity={opportunity}
+                    profile={demoActive ? undefined : lastFormValues}
+                    demo={demoActive}
+                    onAdded={addJobAction}
+                  />
+                  </div>
+                ))}
+                {!selectedOpportunityId && <p className="mt-4 text-sm text-muted">Focus an opportunity to compare your skills with a job posting.</p>}
+                </>
+
               ) : (
                 <div className="text-center py-20 space-y-3">
                   <p className="text-muted">No active session yet.</p>
@@ -274,9 +296,15 @@ function AppContent() {
 }
 
 export default function App() {
+  const [reviewToken, setReviewToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('adviser-review'));
+  useEffect(() => {
+    const update = () => setReviewToken(new URLSearchParams(window.location.hash.slice(1)).get('adviser-review'));
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
   return (
     <ThemeProvider>
-      <AppContent />
+      {reviewToken ? <AdviserReviewPage token={reviewToken} /> : <AppContent />}
     </ThemeProvider>
   );
 }

@@ -1,3 +1,5 @@
+import { workerSupportRouter } from './routes/workerSupport.js';
+import { jobComparisonRouter } from './routes/jobComparison.js';
 import { resumeRouter } from './routes/resume.js';
 import { evaluationsRouter } from './routes/evaluations.js';
 import express, { type ErrorRequestHandler } from 'express';
@@ -61,7 +63,9 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/api/support', workerSupportRouter);
 app.use('/api/resume', resumeRouter);
+app.use('/api/job-comparison', jobComparisonRouter);
 app.use('/api/evaluations', evaluationsRouter);
 app.use('/api/analyze', analyzeLimiter, analyzeRouter);
 app.use('/api/sessions', rateLimit({
