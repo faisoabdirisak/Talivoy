@@ -9,7 +9,7 @@ import { prisma } from '../lib/db.js';
 import { generateGraniteContent } from '../lib/granite.js';
 import { generateContent } from '../lib/gemini.js';
 
-const signingKey = randomBytes(32);
+const signingKey = process.env.ACTION_SIGNING_SECRET || randomBytes(32);
 const actionSchema = z.object({
   token: z.string().max(256),
   opportunityId: z.string().min(1).max(200),

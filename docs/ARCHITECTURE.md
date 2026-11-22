@@ -114,3 +114,8 @@ The dashboard restores owned saved entries, shows the latest saved combination a
 ## Development-process evidence
 
 I used IBM Bob as my primary AI development assistant for the staged application build. The [evidence gallery](IBM_BOB_EVIDENCE.md) links the original screenshots of planning, persistence tasks, the Bob workspace and its Agent/Plan controls. The images document development context. The implementation descriptions and automated checks in this guide describe current behavior.
+
+
+## Netlify hosting configuration
+
+The optional Netlify build bundles Express as a Node function with native /api/* and /health routes. React and API requests share the public HTTPS origin and existing guest cookies. A separate generated PostgreSQL Prisma client is injected before routes load; the local SQLite schema and client remain separate. Netlify Database applies committed SQL migrations and stores sessions and support records outside the function filesystem. ACTION_SIGNING_SECRET keeps job-comparison authorizations stable across instances. See [Netlify deployment](NETLIFY.md) for environment setup, platform limits and live acceptance checks. Cloud deployment remains pending.

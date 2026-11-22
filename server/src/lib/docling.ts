@@ -17,7 +17,7 @@ export async function extractWithDocling(file: Buffer, extension: string, mime: 
     throw new Error('Invalid Docling configuration');
   }
 
-  const signal = AbortSignal.timeout(20_000);
+  const signal = AbortSignal.timeout(process.env.TALIVOY_NETLIFY === 'true' ? 8_000 : 20_000);
   async function request(path: string, body?: FormData): Promise<unknown> {
     const response = await fetch(base.href.replace(/\/+$/, '') + path, {
       method: body ? 'POST' : 'GET',

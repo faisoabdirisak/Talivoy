@@ -26,7 +26,7 @@ export const resumeRouter = Router();
 resumeRouter.post(
   '/',
   rateLimit({ windowMs: 15 * 60_000, limit: 5, standardHeaders: true, legacyHeaders: false }),
-  raw({ type: Object.keys(mime), limit: '5mb', inflate: false }),
+  raw({ type: Object.keys(mime), limit: process.env.TALIVOY_NETLIFY === 'true' ? '4mb' : '5mb', inflate: false }),
   asyncHandler(async (req, res) => {
     const type = req.get('Content-Type')?.split(';')[0] as keyof typeof mime;
     const extension = mime[type];

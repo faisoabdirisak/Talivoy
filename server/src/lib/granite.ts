@@ -28,7 +28,7 @@ async function getToken(key: string) {
       grant_type: 'urn:ibm:params:oauth:grant-type:apikey',
       apikey: key,
     }),
-    signal: AbortSignal.timeout(15_000),
+    signal: AbortSignal.timeout(process.env.TALIVOY_NETLIFY === 'true' ? 8_000 : 15_000),
     redirect: 'error',
   });
   if (!response.ok) throw new Error('IBM Cloud authentication failed');
@@ -64,7 +64,7 @@ export async function generateGraniteContent(prompt: string): Promise<string> {
       temperature: 0.3,
       max_tokens: 4096,
     }),
-    signal: AbortSignal.timeout(75_000),
+    signal: AbortSignal.timeout(process.env.TALIVOY_NETLIFY === 'true' ? 32_000 : 75_000),
     redirect: 'error',
   });
   if (!response.ok) {

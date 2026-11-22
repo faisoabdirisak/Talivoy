@@ -1,6 +1,9 @@
 # Deployment preparation
 
-This repository supports a **single Express process with SQLite on persistent storage**. It is not yet published by these workflows.
+This repository supports a **single Express process with SQLite on persistent storage**,
+or a **Netlify API function with managed PostgreSQL**. For Netlify, follow
+[NETLIFY.md](NETLIFY.md); the SQLite instructions below apply to a conventional Node server.
+Neither configuration has been published by these workflows.
 
 ## Runtime
 
@@ -29,7 +32,8 @@ Use the same public origin for UI and API so the Strict cookie works. Existing d
 - If the host is behind a proxy, configure Express trust proxy only for the actual trusted topology. The current default is conservative and may rate-limit all visitors under a proxy's IP.
 - Backups, account recovery, automatic session expiry/deletion, and service-level guarantees are not implemented.
 - Helmet's default content policy may block external Google Fonts; system font fallback is available. Review external assets before changing the policy.
-- There is no automated deploy job or tested hosting configuration in CI. Choose and verify a hosting service separately.
+- Netlify configuration and a disposable PostgreSQL/function integration check are included in CI.
+  Public deployment, hosting billing and live browser acceptance still require setup.
 
 
 ## Updating an existing installation
@@ -55,7 +59,10 @@ If `EADDRINUSE` reports port 3001, identify the listening application and stop t
 
 A localhost link identifies the viewer's own computer. Remote review requires a reachable deployed origin. Workers choose how to send generated links. Dashboard notices require the app to be open, and calendar alerts require importing the event. Actual calendar delivery and public remote review remain acceptance checks.
 
-Job-comparison action authorizations use a process-memory signing key, so a restart invalidates pending actions. Existing adviser snapshots remain readable until database expiry or revocation, subject to storage availability.
+Job-comparison action authorizations use ACTION_SIGNING_SECRET when configured. Keep this secret
+stable across restarts (required on Netlify). Without it, conventional local servers use a
+process-memory key and restarts invalidate pending actions. Existing adviser snapshots remain
+readable until database expiry or revocation, subject to storage availability.
 
 
 ## Adviser response and check-in schema update

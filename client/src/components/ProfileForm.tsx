@@ -16,6 +16,8 @@ interface ProfileFormProps {
   initialValues?: Partial<AnalyzeRequest>;
 }
 
+const RESUME_MAX_MB = import.meta.env.VITE_RESUME_MAX_MB === '4' ? 4 : 5;
+
 const FIELD_LABEL: Record<string, string> = {
   currentRole: 'Current or most recent role *',
   skills: 'Key skills *',
@@ -67,12 +69,12 @@ export function ProfileForm({
     if (!file) return;
     const extension = file.name.split('.').pop()?.toLowerCase();
     const valid =
-      ['pdf', 'docx'].includes(extension ?? '') && file.size > 0 && file.size <= 5 * 1024 * 1024;
+      ['pdf', 'docx'].includes(extension ?? '') && file.size > 0 && file.size <= RESUME_MAX_MB * 1024 * 1024;
     setResumeFile(valid ? file : null);
     setResumeReady(false);
     setResumeReviewed(false);
     setImportError(!valid);
-    setImportNote(valid ? '' : 'Choose a PDF or DOCX file up to 5 MB.');
+    setImportNote(valid ? '' : `Choose a PDF or DOCX file up to ${RESUME_MAX_MB} MB.`);
   }
 
   async function analyzeResume() {
@@ -98,7 +100,7 @@ export function ProfileForm({
       if (!response.ok) {
         const messages: Partial<Record<number, string>> = {
           400: 'Choose a valid PDF or DOCX file.',
-          413: 'Choose a file up to 5 MB.',
+          413: `Choose a file up to ${RESUME_MAX_MB} MB.`,
           429: 'Too many import attempts. Wait a few minutes or enter your profile manually.',
           422: 'Choose a readable DOCX or a PDF with selectable text. Scanned PDFs need a text version.',
         };
@@ -277,7 +279,7 @@ export function ProfileForm({
         {entryMode === 'resume' && (
           <>
             <p className="text-xs text-muted">
-              PDF or DOCX up to 5 MB. When you analyze the file, configured services may process it
+              PDF or DOCX up to {RESUME_MAX_MB} MB. When you analyze the file, configured services may process it
               and its text to suggest profile details.
             </p>
             {resumeFile && (

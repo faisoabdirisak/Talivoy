@@ -11,7 +11,10 @@
     "lint": "npm run lint --workspaces --if-present",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .gitignore",
     "test:coverage": "npm run test:coverage --workspace=server",
-    "start": "npm run start --workspace=server"
+    "start": "npm run start --workspace=server",
+    "build:netlify": "node scripts/netlify-schema.mjs && npm run build && node scripts/netlify-function.mjs",
+    "db:generate:netlify": "node scripts/netlify-schema.mjs",
+    "test:netlify": "node scripts/netlify-schema.mjs && node scripts/netlify-function.mjs && node scripts/test-netlify.mjs"
   },
   "workspaces": [
     "shared",
@@ -20,7 +23,9 @@
   ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@netlify/database-dev": "^1.0.2",
     "@vitest/coverage-v8": "5.1.0",
+    "esbuild": "^0.28.2",
     "eslint": "^10.14.0",
     "prettier": "^3.3.3",
     "typescript-eslint": "^8.72.1",
@@ -33,5 +38,9 @@
   },
   "overrides": {
     "minimatch": "^11.0.1"
+  },
+  "dependencies": {
+    "@netlify/database": "^2.0.3",
+    "serverless-http": "^4.0.0"
   }
 }

@@ -14,6 +14,13 @@ I developed Talivoy with love for the IBM AI Challenge, with IBM Bob as my prima
 | Storage | Prisma 5 with SQLite |
 | Quality | Vitest, Testing Library, ESLint, GitHub Actions, CodeQL |
 
+## Netlify deployment
+
+Netlify configuration now includes the React site, an Express API function and a PostgreSQL
+schema migration for Netlify Database. Local development continues to use SQLite.
+Follow the [Netlify setup instructions](docs/NETLIFY.md) before publishing. Cloud setup and
+live acceptance checks are still required; local database files and sessions are not uploaded.
+
 ## Who Talivoy serves
 
 Talivoy supports newcomers, immigrants, resettled professionals, career changers and people returning to work. It also helps organizations and advisers work with them on career options and practical next steps.

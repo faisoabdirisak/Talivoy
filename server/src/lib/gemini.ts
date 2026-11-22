@@ -41,6 +41,7 @@ export async function generateContent(prompt: string): Promise<string> {
     model: GEMINI_MODEL,
     contents: prompt,
     config: {
+      httpOptions: { timeout: process.env.TALIVOY_NETLIFY === 'true' ? 32_000 : 75_000 },
       temperature: 0.3,
       maxOutputTokens: 4096,
     },
