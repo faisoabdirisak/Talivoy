@@ -10,7 +10,7 @@
   directory = ".netlify/functions"
   node_bundler = "esbuild"
   external_node_modules = ["@prisma/client", "@talivoy/netlify-prisma", "pdfjs-dist"]
-  included_files = ["node_modules/@prisma/client/**", "node_modules/.prisma/client/**", "node_modules/@talivoy/netlify-prisma/**", "node_modules/pdfjs-dist/**", "!node_modules/.prisma/client/*.node", "!node_modules/.prisma/client/*.tmp*", "!node_modules/@talivoy/netlify-prisma/*windows*", "!node_modules/@talivoy/netlify-prisma/*.tmp*"]
+  included_files = ["node_modules/@prisma/client/**", "node_modules/.prisma/client/**", "node_modules/@talivoy/netlify-prisma/**", "node_modules/pdfjs-dist/**", "node_modules/@napi-rs/canvas/**", "node_modules/@napi-rs/canvas-linux-x64-gnu/**", "!node_modules/.prisma/client/*.node", "!node_modules/.prisma/client/*.tmp*", "!node_modules/@talivoy/netlify-prisma/*windows*", "!node_modules/@talivoy/netlify-prisma/*.tmp*"]
 
 [[redirects]]
   from = "/*"

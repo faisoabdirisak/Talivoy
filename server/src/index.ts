@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 import { analyzeRouter } from './routes/analyze.js';
 import { sessionsRouter } from './routes/sessions.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const appDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 // Netlify has one trusted ingress hop. Never trust arbitrary forwarded IPs locally.
@@ -82,7 +82,7 @@ app.use('/api', (_req, res) => { res.status(404).json({ error: 'API route not fo
 // In production, Express serves the pre-built client SPA.
 // The dev proxy in vite.config.ts handles this in development.
 if (process.env.NODE_ENV === 'production' && process.env.TALIVOY_NETLIFY !== 'true') {
-  const clientDist = path.resolve(__dirname, '../../client/dist');
+  const clientDist = path.resolve(appDirectory, '../../client/dist');
   app.use(express.static(clientDist));
   // SPA fallback — any non-API route returns index.html
   app.get('*', (_req, res) => {
