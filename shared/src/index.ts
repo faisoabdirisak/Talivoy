@@ -204,3 +204,4 @@ export { EvaluationInputSchema, type EvaluationInput, type PublicEvaluation } fr
 export { JobComparisonInputSchema, JobComparisonSchema, type JobComparison, type JobComparisonInput, type JobComparisonResult } from './jobComparison.js';
 export { ReminderInputSchema, AdviserShareInputSchema, AdviserSnapshotSchema, type AdviserSnapshot, type AdviserShareInput, type MilestoneReminder, type AdviserShare } from './workerSupport.js';
 export { AdviserFeedbackInputSchema, WeeklyCheckInInputSchema, type AdviserFeedbackInput, type AdviserFeedback, type WeeklyCheckInInput, type WeeklyCheckIn } from './workerSupport.js';
+export { PathwayStateSchema, PathwayCareerSchema, PathwayStatusSchema, PathwayItemInputSchema, PATHWAY_STATES, PATHWAY_CAREERS, getPathwaySteps, type PathwayStep, type PathwayItemInput, type CareerPathwayItem } from './usCareerPathway.js';

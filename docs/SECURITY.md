@@ -77,3 +77,12 @@ Revocation and expiry deny new adviser submissions. Responses already submitted 
 The response and check-in request IDs support safe retries. The API validates ownership again inside mutations. Check-in previews use a revision fingerprint, and applying a stale preview returns a conflict. Applying a current preview preserves completed tasks and updates unfinished guidance only.
 
 Disposable SQLite tests verify private reads, expiry/revocation rejection, response retention after revocation, replay-safe task creation, check-in history, stale-preview rejection, completion preservation and cascaded deletion.
+
+
+## U.S. career pathway boundary
+
+Pathway entries are scoped through the opportunity's guest session. Shared validation rejects unsupported states, careers and step keys. The action route reads content and HTTPS URLs from the curated catalog and creates a deterministic milestone inside an ownership-checked transaction. Retries preserve existing progress.
+
+Worker notes are private guest data. Adviser snapshots can contain selected pathway actions through the existing task-selection flow. Those actions include official resource links and review dates and omit private checklist notes. Worker-marked Confirmed/Completed statuses record personal review rather than a determination by a licensing authority.
+
+Current source checks and limited geographic/role coverage are displayed in the UI. Ongoing source review is an editorial maintenance task. Automated tests check catalog validation and the actual SQLite ownership, persistence, retry and deletion boundaries.

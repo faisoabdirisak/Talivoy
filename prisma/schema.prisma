@@ -39,6 +39,7 @@ model Opportunity {
   planItems        PlanItem[]
   adviserFeedback  AdviserFeedback[]
   weeklyCheckIns   WeeklyCheckIn[]
+  pathwayItems     CareerPathwayItem[]
 }
 
 model PlanItem {
@@ -52,6 +53,7 @@ model PlanItem {
   resourceUrl    String?
   progressEntry  ProgressEntry?
   reminder       MilestoneReminder?
+  pathwayItem    CareerPathwayItem?
 }
 
 model ProgressEntry {
@@ -130,4 +132,22 @@ model WeeklyCheckIn {
   createdAt        DateTime @default(now())
   appliedAt        DateTime?
   appliedRevision  String?
+}
+
+
+model CareerPathwayItem {
+  id             String @id @default(cuid())
+  opportunityId  String
+  opportunity    Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  state          String
+  career         String
+  stepKey        String
+  status         String @default("To check")
+  notes          String @default("")
+  reviewedAt     DateTime?
+  updatedAt      DateTime @updatedAt
+  planItemId     String? @unique
+  planItem       PlanItem? @relation(fields: [planItemId], references: [id], onDelete: SetNull)
+
+  @@unique([opportunityId, state, career, stepKey])
 }

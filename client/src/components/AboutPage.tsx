@@ -1,6 +1,8 @@
 import { Brand } from './Brand';
 import {
   ArrowRight,
+  Building2,
+  BriefcaseBusiness,
   Compass,
   Eye,
   GraduationCap,
@@ -46,6 +48,24 @@ const journey = [
   },
 ];
 
+const pathwayHighlights = [
+  {
+    icon: ScanSearch,
+    title: 'Explore official sources',
+    copy: 'Choose a supported state and career to review official resource links, source review dates and questions about qualifications, requirements, training and opportunities.',
+  },
+  {
+    icon: ListChecks,
+    title: 'Keep your own checklist',
+    copy: 'Save private notes and mark each step To check, Confirmed or Completed. Your saved checklist stays separate for each state and career, ready to continue after a refresh.',
+  },
+  {
+    icon: Handshake,
+    title: 'Turn review into action',
+    copy: 'Review a checklist action before adding it to Week 4 of your plan. Choose that milestone when creating an adviser review link so you can discuss the official source and next step together.',
+  },
+];
+
 const stakeholders = [
   {
     icon: Compass,
@@ -57,15 +77,28 @@ const stakeholders = [
     title: 'Workers and job seekers',
     copy: 'People affected by job loss, changing industries, or returning to work can explore how their existing skills might transfer. They can choose a path based on their circumstances and take it one task at a time.',
   },
+];
+
+const supportingAudiences = [
   {
-    icon: Handshake,
-    title: 'Career advisers and workforce teams',
-    copy: 'Career advisers, workforce teams and resettlement organizations can review worker-selected details, discuss local requirements and suggest training or a practical next step through private feedback.',
+    icon: Building2,
+    title: 'Resettlement organizations',
+    copy: 'Help newcomers discuss career options and track agreed next steps.',
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: 'Workforce development teams',
+    copy: 'Support workers exploring retraining or a career transition.',
   },
   {
     icon: GraduationCap,
-    title: 'Lecturers and reviewers',
-    copy: 'Lecturers can try a fictional profile or run a live analysis, review a plan, and publish feedback with consent. The Evaluation page shows what reviewers found useful and where they got stuck.',
+    title: 'Community colleges and adult-learning programs',
+    copy: 'Help learners connect existing experience with training goals.',
+  },
+  {
+    icon: Handshake,
+    title: 'Career advisers',
+    copy: 'Review selected plans, provide feedback, and follow up through check-ins.',
   },
 ];
 
@@ -125,6 +158,36 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
         </div>
       </section>
 
+      <section aria-labelledby="about-us-pathway">
+        <h2 id="about-us-pathway" className="mb-3 text-xl font-bold">
+          My U.S. Career Pathway
+        </h2>
+        <p className="mb-3 max-w-3xl text-sm leading-relaxed text-muted">
+          Bring your previous experience into a conversation about your next U.S. role. Open the
+          Dashboard, focus an opportunity and choose Explore My Pathway to investigate practical
+          next steps using official resources.
+        </p>
+        <p className="mb-5 text-sm font-medium text-primary">
+          Initial coverage · Illinois and Minnesota · Registered Nurse and Software Developer
+        </p>
+        <div className="grid gap-4 md:grid-cols-3">
+          {pathwayHighlights.map(({ icon: Icon, title, copy }) => (
+            <article key={title} className={card}>
+              <span className="mb-3 inline-flex rounded-xl bg-primary/10 p-2.5 text-primary">
+                <Icon size={22} aria-hidden="true" />
+              </span>
+              <h3 className="font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{copy}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted">
+          Checklist statuses record your own review. Confirm current requirements with the relevant
+          board, employer or adviser. Personal checklist notes stay in your guest plan, while you
+          choose which milestones to share.
+        </p>
+      </section>
+
       <section aria-labelledby="about-stakeholders">
         <h2 id="about-stakeholders" className="mb-4 text-xl font-bold">
           Who it serves
@@ -140,6 +203,32 @@ export function AboutPage({ onTryDemo }: { onTryDemo: () => void }) {
             </article>
           ))}
         </div>
+      </section>
+
+      <section aria-labelledby="about-supporting-audiences">
+        <h2 id="about-supporting-audiences" className="mb-3 text-xl font-bold">
+          Organizations and advisers supporting the journey
+        </h2>
+        <p className="mb-5 max-w-3xl text-sm leading-relaxed text-muted">
+          Talivoy helps workforce and resettlement organizations support newcomers and workers in
+          transition with personalized career exploration, skills development plans and adviser
+          collaboration. Workers choose the plan details they share and review suggested next steps.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {supportingAudiences.map(({ icon: Icon, title, copy }) => (
+            <article key={title} className={card}>
+              <span className="mb-3 inline-flex rounded-xl bg-primary/10 p-2.5 text-primary">
+                <Icon size={22} aria-hidden="true" />
+              </span>
+              <h3 className="font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{copy}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-4 text-sm leading-relaxed text-muted">
+          Lecturers and reviewers can try a fictional profile or run a live analysis, review a plan
+          and publish feedback with consent through the Evaluation page.
+        </p>
       </section>
 
       <div className="grid gap-4 md:grid-cols-2">

@@ -43,3 +43,29 @@
     @apply text-[#64748B] dark:text-[#8B949E];
   }
 }
+
+
+@keyframes footer-heartbeat {
+  0%, 40%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  14% {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 4px rgb(244 63 94 / 35%));
+  }
+  26% {
+    transform: scale(1.06);
+  }
+  32% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 3px rgb(244 63 94 / 25%));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .footer-heart {
+    transform-origin: center;
+    animation: footer-heartbeat 1.8s ease-in-out infinite;
+  }
+}

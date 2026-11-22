@@ -91,6 +91,8 @@ SQLite integration checks cover reminder updates, cross-guest denial, selected s
 
 ## Private adviser responses and weekly check-ins
 
+**Status — implemented and locally verified.**
+
 AdviserShare now stores an optional opportunityId. New links support the private response form; legacy shares keep their readable snapshot. AdviserFeedback belongs to Opportunity and optionally to AdviserShare. Removing the share sets its response shareId to null, retaining submitted responses for the worker. Deleting the opportunity cascades to its responses.
 
 The public submission route validates a current share token, expiry and opportunity association in a transaction. Request IDs make retries reuse the original response. The public route returns a submission confirmation. Private worker routes list owned responses and add an approved next step using a deterministic PlanItem ID. The response does not edit an existing milestone.
@@ -98,3 +100,17 @@ The public submission route validates a current share token, expiry and opportun
 WeeklyCheckIn belongs to Opportunity and stores progress notes, blockers, budget, hours and application timestamps. A deterministic check-in ID makes save retries stable. Preview loads current task/progress data through the existing session projection and calls shared refineRemainingTasks logic. The preview fingerprint includes tasks and constraints. Applying checks that fingerprint, updates unfinished descriptions and marks the entry applied in one transaction. Completed guidance and progress remain saved.
 
 The dashboard displays private response cards and check-in history for a focused live opportunity. Accepting an adviser next step and applying check-in guidance require explicit worker confirmation. Both sets of records cascade with guest-session deletion through their opportunity. Public evaluations continue in their separate publication-consented flow.
+
+
+## U.S. career pathway catalog and storage
+
+shared/src/usCareerPathway.ts defines the supported states, careers, question-based steps and source metadata. The curated catalog covers Registered Nurse and Software Developer in Illinois and Minnesota. Source-reviewed dates record editorial checks. The API validates step keys and obtains source URLs from this catalog when constructing actions.
+
+CareerPathwayItem belongs to Opportunity. Its composite key isolates state/career/step histories under the selected opportunity. An optional unique PlanItem relation records the added action. Deleting an opportunity removes its pathway entries. Deleting a linked milestone clears the optional relation.
+
+The dashboard restores owned saved entries, shows the latest saved combination and supports temporary demo entries. Background discussion text comes from profile details available in the current visit and remains in component state. Individual checklist notes are persisted through the guest API. Reviewed actions join the existing plan and can be selected for adviser sharing. Checklist status and plan-task completion are tracked separately.
+
+
+## Development-process evidence
+
+I used IBM Bob as my primary AI development assistant for the staged application build. The [evidence gallery](IBM_BOB_EVIDENCE.md) links the original screenshots of planning, persistence tasks, the Bob workspace and its Agent/Plan controls. The images document development context. The implementation descriptions and automated checks in this guide describe current behavior.

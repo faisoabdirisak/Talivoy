@@ -18,7 +18,7 @@ No authentication in the MVP. A "Guest Demo" mode loads fictional personas so ju
 
 ## IBM tools and implementation status
 
-IBM Bob was Faiso's primary AI development assistant during the challenge build. Bob helped implement and debug the application across the foundation, analysis, persistence, dashboard, and CI stages. Faiso directed the work and exercised the user journeys.
+IBM Bob was my primary AI development assistant during the challenge build. Bob helped implement and debug the application across the foundation, analysis, persistence, dashboard, and CI stages. I directed the work and exercised the user journeys.
 
 The original milestones below describe the Gemini implementation. The current app can use IBM Granite through watsonx.ai for both résumé interpretation and opportunity generation. The résumé intake path can use hosted Docling for document conversion and uses local extraction when the service is unavailable. Workers review extracted details before requesting opportunities. See the [README](README.md) for setup and verification status.
 
@@ -321,7 +321,7 @@ Explanation visual polish: gradient overview and fit ring, icon-led estimate car
 
 | Area | Current behavior | Verification and remaining work |
 | --- | --- | --- |
-| Development approach | IBM Bob was the primary AI development assistant, with Faiso directing and testing the project. | README records the tool roles. |
+| Development approach | IBM Bob was the primary AI development assistant, and I directed and tested the project. | README records the tool roles. |
 | Providers | Granite through watsonx.ai or Gemini through server configuration. | Provider boundaries simulated in tests; separate fictional live interpretation and comparison checks succeeded. |
 | Résumé intake | Entry choice, deliberate analysis, editable role/location/skills/experience/education/interests and confirmation. | Hosted Docling hit a storage failure; local extraction plus live interpretation worked. Hosted success tested with simulated responses. |
 | Adviser handoff | Printable report from selected opportunity and saved progress. | Implemented locally. |
@@ -330,6 +330,9 @@ Explanation visual polish: gradient overview and fit ring, icon-led estimate car
 | Job comparison | Quoted matches, requirements to check and a reviewed additional Week 4 milestone. | Live fictional comparison and ownership/retry tests passed. |
 | Reminders | Guest-owned dates, dashboard notices and ICS export. | Persistence/format checked; actual calendar alerts need acceptance. |
 | Adviser links | Field selection, preview, expiry, public snapshot read and guest revocation. | SQLite isolation/disclosure/expiry/revocation checked; public remote testing remains pending. |
+| Private adviser feedback | Adviser response form, private dashboard replies, worker confirmation and addition of a next step. | Implemented and locally verified, including ownership, expiry, revocation and retry checks. |
+| Weekly check-ins | Private progress/blocker history and reviewed time/budget guidance for unfinished milestones. | Implemented and locally verified, including stale-preview checks and completed-progress preservation. |
+| My U.S. Career Pathway | Source-linked questions, private checklist notes and statuses, and reviewed Week 4 actions for Illinois/Minnesota nursing and software pathways. | Implemented and locally verified; scope and worker review are explained on the About page. |
 | About and contact | App/stakeholder explanation and footer email/GitHub contact. | Implemented in the interface. |
 
 Recorded implementation checks covered 26 shared, 94 server and 51 client tests across package runs and the corrected targeted client rerun. Lint, type checking and production build passed. Server coverage at that check was 92.71% statements, 87.66% branches, 98.80% functions and 93.62% lines. A new GitHub Actions run remains a release check after pushing.
@@ -364,7 +367,7 @@ Implemented check-in schemas, owner-scoped routes, retry-safe saving, history, r
 
 ## Documentation map
 
-- `README.md` explains journeys, IBM tools, setup, feature usage and proposed work.
+- `README.md` explains journeys, IBM tools, setup, implemented functionality and remaining deployment checks.
 - `docs/ARCHITECTURE.md` explains ownership, models, providers, reminders and sharing.
 - `docs/API.md` records implemented routes, limits and responses.
 - `docs/SECURITY.md` records access controls, shared/public data and retention.
@@ -386,3 +389,48 @@ Verification for this update passed 176 tests (26 shared, 96 server, 54 client),
 The application is now named Talivoy with the promise “Your talent. Your next chapter.” Navigation, footer, About, onboarding, document headings, reports and calendar text use the new identity. The About page describes support for newcomers and resettled workers alongside broader career transitions. Existing guest cookies and onboarding preferences have compatibility handling.
 
 The package scope is @talivoy. The local checkout folder is Talivoy and the GitHub repository is https://github.com/faisoabdirisak/Talivoy. This file is the renamed original development plan.
+
+
+## Audience positioning — 22 November 2026
+
+The About page and README identify workers as the primary users and describe four supporting audiences.
+
+| Audience | How they could use Talivoy |
+| --- | --- |
+| Resettlement organizations | Help newcomers discuss career options and track agreed next steps. |
+| Workforce development teams | Support workers exploring retraining or a career transition. |
+| Community colleges and adult-learning programs | Help learners connect existing experience with training goals. |
+| Career advisers | Review selected plans, provide feedback, and follow up through check-ins. |
+
+The About page uses four responsive cards with distinct icons. Worker-selected sharing, private adviser feedback and worker-owned check-in history provide the existing collaboration workflow. Organization team accounts and direct adviser access to private check-in history would require additional implementation.
+
+
+## My U.S. Career Pathway — implemented locally, 22 November 2026
+
+- [x] Add a source-linked pathway panel to the focused dashboard opportunity.
+- [x] Provide Registered Nurse and Software Developer catalogs for Illinois and Minnesota.
+- [x] Show existing profile context, official sources, source-reviewed dates and adviser questions.
+- [x] Save worker notes and To check/Confirmed/Completed statuses separately for each state/career.
+- [x] Add reviewed source-linked actions to Week 4 with retry-safe task identity.
+- [x] Support selected adviser sharing of pathway milestones.
+- [x] Apply the additive checklist table after a local database backup.
+- [ ] Extend verified catalog coverage to additional roles and states.
+- [ ] Validate the workflow with a newcomer and an adviser.
+
+The catalog consists of questions and resources reviewed on 22 November 2026. Worker status labels reflect their review. Licensing decisions and qualification acceptance belong to the relevant authority or employer. Background discussion notes remain on the page; saved checklist notes are private guest data.
+
+
+Verification passed 183 tests (28 shared, 99 server, 56 client), lint, type checking and the production build. Server coverage passed at 93.37% statements, 87.87% branches, 99% functions and 94.52% lines. SQLite checks covered independent state/career records, ownership, reviewed timestamps, source-linked action retries, adviser snapshot content and cascading deletion. The backend was restarted and its health endpoint returned ok. The existing bundle-size advisory remains.
+
+The About page now presents the implemented pathway workflow in three cards and states the initial state/role coverage, source-verification step and selected adviser sharing. The README includes it in the current functionality list.
+
+
+## IBM Bob screenshot evidence — 22 November 2026
+
+- [x] Include the five original screenshots in the bobscrenshot folder.
+- [x] Add an indexed gallery in [docs/IBM_BOB_EVIDENCE.md](docs/IBM_BOB_EVIDENCE.md).
+- [x] Link the gallery and show a workspace preview in the README.
+- [x] Describe the visible development checklist, session implementation tasks, Bob workspace and Agent/Plan controls.
+- [x] Explain that screenshot task counters and repository messages are historical capture-time context.
+
+I used Bob as my primary AI development assistant. The gallery supports this account alongside the source, Git history, tests and CI results. It preserves the distinction between recorded development work and current implementation verification.

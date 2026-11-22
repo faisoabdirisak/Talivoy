@@ -110,6 +110,8 @@ Public responses include source, ID, creation time, opportunity title, reviewer 
 
 ## Private adviser responses
 
+**Status — implemented and locally verified.**
+
 All paths below use the prefix /api/support and its shared 60-request-per-minute limit.
 
 | Method and path | Input | Access and behavior |
@@ -124,6 +126,8 @@ Private reads omit token, share ID and submission request ID. Acceptance uses a 
 
 ## Weekly check-ins
 
+**Status — implemented and locally verified.**
+
 | Method and path | Input | Access and behavior |
 | --- | --- | --- |
 | GET /check-ins?opportunityId=... | Opportunity ID | Guest-owned history ordered newest first. |
@@ -135,3 +139,20 @@ Completed work requires 1–1000 characters; blockers allow up to 1000. Budget i
 Check-in adjustments reuse shared TypeScript refinement logic. A fingerprint protects the preview from concurrent task changes. Applying updates only unfinished descriptions and sets appliedAt and appliedRevision in the same transaction. Retrying the same applied revision returns current saved state. These routes record progress notes and propose time/budget guidance. Task checkboxes control actual completion.
 
 Existing guest cookies named `restart_sid` are accepted during the Talivoy rebrand. New sessions use `talivoy_sid`. Start over clears both cookie names.
+
+
+## U.S. career pathway checklist
+
+Paths use the /api/support prefix, its guest-cookie check and its shared 60-request-per-minute limit.
+
+| Method and path | Input | Behavior |
+| --- | --- | --- |
+| GET /pathway-items?opportunityId=... | Opportunity ID | Return the worker's saved entries, most recently updated first. |
+| POST /pathway-items | opportunityId, state, career, stepKey, status, notes | Validate the catalog selection, check ownership and upsert one checklist row per opportunity/state/career/step. |
+| POST /pathway-items/:id/action | Empty JSON object | Verify ownership, load the trusted catalog step and add/reuse its Week 4 milestone. |
+
+State is IL or MN. Career is registered-nurse or software-developer. Status is To check, Confirmed or Completed. Notes allow up to 1000 characters. Step keys must exist in the selected career catalog. Invalid selections return 400, an unowned update returns 403, and unavailable actions return 404.
+
+CareerPathwayItem stores the selection, status, notes, reviewedAt, updatedAt and optional planItemId. Confirmed/Completed saves record a worker-review timestamp. Returning to To check clears that timestamp. The catalog's sourceReviewed date is maintained separately from the worker timestamp.
+
+Plan actions use deterministic IDs and an empty upsert update to preserve completed progress on retries. Descriptions carry source names, URLs and review dates. Personal checklist notes are omitted from the plan action. The existing adviser snapshot flow can share a selected milestone. Opportunity deletion cascades to its checklist rows.

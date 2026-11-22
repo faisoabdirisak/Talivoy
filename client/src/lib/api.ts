@@ -198,3 +198,11 @@ export const refineCheckIn = (id: string, revision?: string) =>
   apiFetch<{ original: Opportunity; refined: Opportunity; revision: string }>('/api/support/check-ins/' + encodeURIComponent(id) + '/refine', {
     method: 'POST', body: JSON.stringify({ revision }),
   });
+
+import type { CareerPathwayItem, PathwayItemInput } from '@talivoy/shared';
+export const listPathwayItems = (opportunityId: string) =>
+  apiFetch<CareerPathwayItem[]>('/api/support/pathway-items?opportunityId=' + encodeURIComponent(opportunityId), { method: 'GET' });
+export const savePathwayItem = (input: PathwayItemInput) =>
+  apiFetch<CareerPathwayItem>('/api/support/pathway-items', { method: 'POST', body: JSON.stringify(input) });
+export const addPathwayAction = (id: string) =>
+  apiFetch<PlanItem>('/api/support/pathway-items/' + encodeURIComponent(id) + '/action', { method: 'POST', body: '{}' });

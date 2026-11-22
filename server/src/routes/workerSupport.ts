@@ -4,6 +4,10 @@ import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import {
+  PathwayItemInputSchema,
+  getPathwaySteps,
+  PATHWAY_STATES,
+  PATHWAY_CAREERS,
   AdviserFeedbackInputSchema,
   WeeklyCheckInInputSchema,
   refineRemainingTasks,
@@ -448,13 +452,132 @@ workerSupportRouter.post(
       return;
     }
     if (result === 'stale' || result === 'applied') {
-      res
-        .status(409)
-        .json({
-          error: 'The plan changed or this check-in was applied. Refresh and review again.',
-        });
+      res.status(409).json({
+        error: 'The plan changed or this check-in was applied. Refresh and review again.',
+      });
       return;
     }
     res.json(result);
+  })
+);
+
+const pathwayItemFields = {
+  id: true,
+  opportunityId: true,
+  state: true,
+  career: true,
+  stepKey: true,
+  status: true,
+  notes: true,
+  reviewedAt: true,
+  updatedAt: true,
+  planItemId: true,
+} as const;
+
+workerSupportRouter.get(
+  '/pathway-items',
+  asyncHandler(async (req, res) => {
+    const opportunityId =
+      typeof req.query.opportunityId === 'string' ? req.query.opportunityId : '';
+    res.json(
+      await prisma.careerPathwayItem.findMany({
+        where: { opportunityId, opportunity: { session: { cookieToken: getSessionToken(req)! } } },
+        select: pathwayItemFields,
+        orderBy: [{ updatedAt: 'desc' }, { id: 'asc' }],
+      })
+    );
+  })
+);
+
+workerSupportRouter.post(
+  '/pathway-items',
+  asyncHandler(async (req, res) => {
+    const parsed = PathwayItemInputSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: 'Choose a supported state, career and checklist step.' });
+      return;
+    }
+    const input = parsed.data;
+    const item = await prisma.$transaction(async (tx) => {
+      const opportunity = await tx.opportunity.findFirst({
+        where: { id: input.opportunityId, session: { cookieToken: getSessionToken(req)! } },
+      });
+      if (!opportunity) return null;
+      const reviewedAt = input.status === 'To check' ? null : new Date();
+      return tx.careerPathwayItem.upsert({
+        where: {
+          opportunityId_state_career_stepKey: {
+            opportunityId: input.opportunityId,
+            state: input.state,
+            career: input.career,
+            stepKey: input.stepKey,
+          },
+        },
+        update: { status: input.status, notes: input.notes, reviewedAt },
+        create: { ...input, reviewedAt },
+        select: pathwayItemFields,
+      });
+    });
+    if (!item) {
+      res.status(403).json({ error: 'This plan is unavailable.' });
+      return;
+    }
+    res.json(item);
+  })
+);
+
+workerSupportRouter.post(
+  '/pathway-items/:id/action',
+  asyncHandler(async (req, res) => {
+    const item = await prisma.$transaction(async (tx) => {
+      const row = await tx.careerPathwayItem.findFirst({
+        where: {
+          id: String(req.params.id),
+          opportunity: { session: { cookieToken: getSessionToken(req)! } },
+        },
+      });
+      if (!row) return null;
+      const parsed = PathwayItemInputSchema.safeParse(row);
+      if (!parsed.success) return null;
+      const step = getPathwaySteps(parsed.data.state, parsed.data.career).find(
+        (value) => value.key === row.stepKey
+      )!;
+      const task = await tx.planItem.upsert({
+        where: { id: 'pathway-task-' + row.id },
+        update: {},
+        create: {
+          id: 'pathway-task-' + row.id,
+          opportunityId: row.opportunityId,
+          title: step.title,
+          description: [
+            PATHWAY_CAREERS[parsed.data.career] + ' · ' + PATHWAY_STATES[parsed.data.state],
+            step.description,
+            'Question to discuss: ' + step.question,
+            'Source reviewed ' + step.sourceReviewed + ': ' + step.sourceName,
+            step.sourceUrl,
+          ].join('\n'),
+          resourceUrl: step.sourceUrl,
+          day: 30,
+          week: 4,
+        },
+        include: { progressEntry: true },
+      });
+      await tx.careerPathwayItem.update({ where: { id: row.id }, data: { planItemId: task.id } });
+      return {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        resourceUrl: task.resourceUrl,
+        day: task.day,
+        week: task.week,
+        isCompleted: task.progressEntry?.isCompleted ?? false,
+        completedAt: task.progressEntry?.completedAt ?? null,
+      };
+    });
+    if (!item) {
+      res.status(404).json({ error: 'This pathway step is unavailable.' });
+      return;
+    }
+    res.json(item);
   })
 );

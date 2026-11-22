@@ -112,7 +112,7 @@ export function AppShell({
               Developed with{' '}
               <Heart
                 size={14}
-                className="fill-rose-500 text-rose-500"
+                className="footer-heart fill-rose-500 text-rose-500"
                 role="img"
                 aria-label="love"
               />{' '}

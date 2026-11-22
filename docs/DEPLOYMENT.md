@@ -65,3 +65,10 @@ The current update adds AdviserFeedback and WeeklyCheckIn tables and an optional
 Create a fresh adviser link to enable responses. Existing snapshots remain readable. Verify a response from a browser without the worker cookie, private retrieval from the owner dashboard, rejection after revocation, and acceptance of a next step. Submit a weekly check-in, reload its history, review an adjustment and verify completed tasks retain their state.
 
 These features use the existing saved guest session. Losing the guest cookie also loses dashboard access to private responses and check-in history.
+
+
+## Career pathway schema and acceptance
+
+This update adds CareerPathwayItem. Back up SQLite, stop the backend and run the existing db:push command before starting the updated server. The local database was backed up and the additive table was applied during implementation.
+
+Test both supported roles and states, a saved checklist after refresh, a reviewed action save and selection of that action for adviser sharing. Confirm source links reach the named authorities and local career resources. Review the catalog when requirements or source locations change. Public deployment does not expand the catalog beyond its displayed coverage.

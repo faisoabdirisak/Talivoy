@@ -3,7 +3,7 @@
 Your talent. Your next chapter.
 
 Career exploration, upskilling and practical next steps for newcomers, resettled workers, career changers and people returning to work.
-Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the primary AI development assistant.
+I developed Talivoy with love for the IBM AI Challenge, with IBM Bob as my primary AI development assistant.
 
 | Layer | Technology |
 | --- | --- |
@@ -14,13 +14,34 @@ Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the prima
 | Storage | Prisma 5 with SQLite |
 | Quality | Vitest, Testing Library, ESLint, GitHub Actions, CodeQL |
 
+## Who Talivoy serves
+
+Talivoy supports newcomers, immigrants, resettled professionals, career changers and people returning to work. It also helps organizations and advisers work with them on career options and practical next steps.
+
+| Audience | How they could use Talivoy |
+| --- | --- |
+| Resettlement organizations | Help newcomers discuss career options and track agreed next steps. |
+| Workforce development teams | Support workers exploring retraining or a career transition. |
+| Community colleges and adult-learning programs | Help learners connect existing experience with training goals. |
+| Career advisers | Review selected plans, provide feedback, and follow up through check-ins. |
+
+Workers choose what to share through adviser review links. Weekly check-in history stays in the worker's guest session and can inform discussions with their adviser. These audiences use the existing worker/adviser workflows.
+
 ## How the IBM tools are used
 
-**IBM Bob was the primary AI development assistant.** Faiso used Bob to build Talivoy in stages, from the initial application and recommendation pipeline through guest sessions, dashboard progress, and CI. Bob helped implement changes and diagnose issues such as the Prisma startup failure. Faiso set the project direction and tested the worker and guest demo journeys.
+**IBM Bob was the primary AI development assistant.** I used Bob to build Talivoy in stages, from the initial application and recommendation pipeline through guest sessions, dashboard progress, and CI. Bob helped implement changes and diagnose issues such as the Prisma startup failure. I set the project direction and tested the worker and guest demo journeys.
 
 **IBM Granite on watsonx.ai interprets résumés and generates career recommendations.** After a worker selects a file and clicks **Analyze My Résumé**, Granite suggests a recent role, location, skills, experience, education, and stated interests from the extracted text. The worker edits and confirms those details before **Generate My Opportunities** sends the completed profile to the configured model. The API validates the returned opportunities and computes the feasibility scores in TypeScript.
 
 **Docling for IBM watsonx extracts document text.** The backend can send a PDF or DOCX to hosted Docling and retrieve the converted Markdown. If the hosted conversion fails or is disabled, the server reads text-based PDFs and DOCX files locally. A live hosted test encountered a storage error, so the verified live résumé flow used local extraction followed by model interpretation. The hosted success path is covered by simulated tests.
+
+## IBM Bob development evidence
+
+I added five screenshots from my work in IBM Bob to [bobscrenshot](bobscrenshot/). They show the staged development checklist, session-persistence tasks, Bob's application workspace and Agent/Plan controls.
+
+The [IBM Bob evidence gallery](docs/IBM_BOB_EVIDENCE.md) includes all five images with captions explaining what each capture shows. The screenshots record my development process. Current feature status and verification results are documented in the [development plan](talivoy-plan.md).
+
+![Bob workspace showing the development plan and application folders](bobscrenshot/plan%203.png)
 
 ## What works
 
@@ -36,6 +57,9 @@ Developed with love by Faiso for the IBM AI Challenge, with IBM Bob as the prima
 - Compare skills with a pasted job posting and review a suggested additional milestone.
 - Save milestone reminders and download calendar events for notification delivery.
 - Choose plan details for an expiring adviser review link and revoke the link from the guest session.
+- Receive private adviser feedback and approve a recommended next step for your plan.
+- Save weekly check-ins and review time/budget adjustments before applying them.
+- Use My U.S. Career Pathway to save source-linked state/role checklists and add reviewed actions to your plan.
 - Submit publication-consented evaluations for live or fictional demo opportunities.
 - Read the About page and use the footer contact link.
 
@@ -168,7 +192,9 @@ Plan View offers a refinement preview using the worker's total budget and availa
 
 The Evaluation page publishes submitted usefulness feedback after explicit publication consent. The form records the reviewer's name, self-reported role and affiliation, fit/usefulness answers, suggested next step and comments. Visitors can read published feedback. The reviewer code is stored and omitted from public responses. Public evaluations remain in their own table when a guest session is deleted.
 
-## Private adviser feedback
+## Private adviser feedback — implemented
+
+**Status — implemented and locally verified.**
 
 Focus a saved opportunity on the Dashboard and create an adviser review link. The adviser opens the selected snapshot, enters a name and self-reported role, assesses practicality, suggests milestone changes and recommends one next step. **Send Feedback to Worker** stores those answers privately. The shared page returns a submission confirmation and displays the worker-selected snapshot.
 
@@ -176,7 +202,9 @@ On the Dashboard, open **Private adviser feedback** and use **Refresh responses*
 
 Expired and revoked links reject further responses. Responses already submitted remain available to the worker after a link is revoked. Deleting the guest session removes its private responses. Reviewer names and roles are self-reported. Older links created before this update still show their saved snapshots; create a new link to enable the response form.
 
-## Weekly check-ins
+## Weekly check-ins — implemented
+
+**Status — implemented and locally verified.**
 
 Focus a saved opportunity and open **Check In This Week**. Record what you worked on, blockers, your total available budget and weekly hours. Saving creates a private history entry. Record task completion using the plan checkboxes so dashboard progress reflects completed milestones.
 
@@ -184,9 +212,31 @@ From an entry, choose **Review Proposed Adjustments**. The app uses the existing
 
 Private adviser feedback and check-in history use saved live guest plans. The fictional demo keeps its existing temporary plan interactions.
 
+## My U.S. Career Pathway
+
+**Status — implemented and locally verified.** The About page introduces the workflow, source links, private checklist notes and initial state/career coverage.
+
+Focus an opportunity on the Dashboard and open **Explore My Pathway**. Initial coverage includes Registered Nurse and Software Developer in Illinois and Minnesota. Choose the state and career you want to investigate. The panel shows the official sources reviewed on 22 November 2026, practical questions and possible next steps.
+
+Profile details available in the current visit prefill a background discussion space. This space stays on the page. Save findings you want to keep in individual checklist notes. Set each item to **To check**, **Confirmed** or **Completed** and choose **Save Step**. These are worker-recorded review statuses. The authority or employer determines the requirements that apply to the worker.
+
+Review a saved action and explicitly add it to Week 4 of the selected plan. Repeating the save reuses that task and its completion state. The source URL and review date accompany the plan action. Choose the action in an adviser review link to discuss it with an adviser. Personal checklist notes are kept in the worker's guest plan.
+
+Each state/career combination has its own saved checklist. Opening the panel restores the most recently updated saved combination. The demo keeps temporary local entries. Official links open external resources for current details, training and opportunities. The panel uses a curated source list and questions to verify. It does not automatically retrieve current job listings or determine licensing eligibility.
+
+### Sources reviewed
+
+- [Illinois IDFPR nursing](https://idfpr.illinois.gov/profs/nursing.html)
+- [Minnesota Board of Nursing licensure](https://mn.gov/boards/nursing/licensure/)
+- [U.S. Department of Education foreign qualification recognition](https://www.ed.gov/about/initiatives/international-affairs/recognition-of-foreign-qualifications)
+- [BLS software developer occupation overview](https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm)
+- [Illinois workNet](https://www.illinoisworknet.com/)
+- [Minnesota CareerForce](https://careerforce.mn.gov/)
+
 ## Project references
 
 - [Development plan and stage status](talivoy-plan.md)
+- [IBM Bob development evidence and screenshot gallery](docs/IBM_BOB_EVIDENCE.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [API reference](docs/API.md)
 - [Contributing and verification](docs/CONTRIBUTING.md)

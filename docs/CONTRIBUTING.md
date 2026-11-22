@@ -57,3 +57,21 @@ No automatic deployment is enabled by CI. Publishing, destructive migrations, an
 - Change a task between preview and apply to verify stale-preview handling.
 - Verify completed task descriptions and timestamps remain saved after adjustments.
 - Confirm response and check-in rows disappear when their disposable guest session is deleted.
+
+
+## Career pathway acceptance
+
+- Focus a live opportunity and open My U.S. Career Pathway.
+- Choose Illinois or Minnesota and a supported career, check the displayed source and review date, and save notes with a checklist status.
+- Refresh and verify the state/career combination and notes restore.
+- Switch combinations and verify their records remain separate.
+- Review an action before adding it. Retry and verify the same milestone and its progress are preserved.
+- Select the milestone in an adviser snapshot and verify source details appear while private checklist notes are omitted.
+- Keep source changes grounded in the named authorities and update source-reviewed dates only after checking those sources.
+
+
+## Development evidence
+
+The [IBM Bob evidence gallery](IBM_BOB_EVIDENCE.md) indexes five original screenshots in the repository's bobscrenshot folder. The gallery explains the visible planning, implementation-tracking and workspace context. Captions distinguish historical checklist progress from current implementation and test results.
+
+I describe IBM Bob as my primary AI development assistant. Development screenshots, Git history and executable checks provide complementary records of the project. Preserve the original captures when extending the evidence index, and review additional images for credentials or personal data before publishing them.
