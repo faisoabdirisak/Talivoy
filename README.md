@@ -11,15 +11,16 @@ I developed Talivoy with love for the IBM AI Challenge, with IBM Bob as my prima
 | API | Express 4, Zod |
 | AI | IBM Granite through watsonx.ai, with Gemini as a configurable alternative |
 | Document extraction | Docling for IBM watsonx, with local PDF and DOCX extraction as a fallback |
-| Storage | Prisma 5 with SQLite |
+| Storage | Prisma 5; PostgreSQL on Netlify, SQLite locally |
 | Quality | Vitest, Testing Library, ESLint, GitHub Actions, CodeQL |
 
 ## Netlify deployment
 
 Netlify configuration now includes the React site, an Express API function and a PostgreSQL
 schema migration for Netlify Database. Local development continues to use SQLite.
-Follow the [Netlify setup instructions](docs/NETLIFY.md) before publishing. Cloud setup and
-live acceptance checks are still required; local database files and sessions are not uploaded.
+**Live application: [talivoy.netlify.app](https://talivoy.netlify.app/).** Deployment and core live workflows were verified on 22 November 2026.
+See the [live verification record](docs/LIVE_VERIFICATION.md) for automated checks, my manual acceptance results and remaining work.
+The [Netlify setup instructions](docs/NETLIFY.md) cover future deployments. Local database files and sessions are not uploaded.
 
 ## Who Talivoy serves
 
@@ -150,17 +151,17 @@ Build first with `npm ci` and `npm run build`. Inject `NODE_ENV=production`, an 
 the credentials for the selected `AI_PROVIDER`, and a persistent `DATABASE_URL` into the server environment.
 Then run `npm start`. Runtime TypeScript uses `tsx`, so the current deployment must install development dependencies too.
 Serve through HTTPS: production guest cookies have the Secure flag and will not work on plain HTTP.
-See [deployment instructions](docs/DEPLOYMENT.md). No public deployment is created by these workflows.
+These conventional-server commands remain available for SQLite hosting. The public deployment uses Netlify Functions and managed PostgreSQL. GitHub pushes trigger the connected Netlify deployment; GitHub Actions runs quality checks separately. See [deployment instructions](docs/DEPLOYMENT.md).
 
 ## Data and limitations
 
-- The configured AI provider receives extracted résumé text during interpretation and the confirmed profile during recommendation generation. When hosted Docling is enabled, it receives the uploaded file for conversion. The app stores generated recommendations and progress in SQLite. Recommendations may repeat details from the profile.
-- Résumé uploads accept PDF and DOCX up to 5 MB. Local PDF extraction requires selectable text. Use fictional résumés when demonstrating the app.
-- SQLite stores recommendations, plan items, selection, and completion timestamps. The browser holds a 30-day HttpOnly guest cookie.
+- The configured AI provider receives extracted résumé text during interpretation and the confirmed profile during recommendation generation. When hosted Docling is enabled, it receives the uploaded file for conversion. The app stores generated recommendations and progress in PostgreSQL on Netlify and SQLite locally. Recommendations may repeat details from the profile.
+- Résumé uploads accept PDF and DOCX up to 4 MB on Netlify and 5 MB locally. Local PDF extraction requires selectable text. Use fictional résumés when demonstrating the app.
+- PostgreSQL on Netlify, or SQLite locally, stores recommendations, plan items, selection, and completion timestamps. The browser holds a 30-day HttpOnly guest cookie.
 - No accounts, cross-device access, password recovery, or automatic database expiry/retention cleanup.
 - Losing the cookie makes the saved session inaccessible through the UI; back up storage appropriately and use fictional data for judging.
 - New analyses save a validated version-1 explanation with estimated costs, risks, assumptions, verification questions, and scoring signals. Older saved opportunities remain intact and show explanation unavailable. Missing estimates remain unknown rather than being replaced with zero.
-- SQLite on one persistent instance is the prototype deployment model, not a horizontally scaled service.
+- The public deployment uses shared PostgreSQL storage. SQLite hosting requires one persistent instance. API rate-limit counters remain per instance.
 - The separate `gemini-test` folder is outside this application and must not be included in its repository.
 
 ## Compare your skills with a job posting
@@ -171,7 +172,7 @@ The result shows supported matches with quotes from both inputs, requirements to
 
 Profile details entered during the current visit can prefill the comparison. After refresh, enter the relevant details again because the original profile is held in browser memory. Fictional demo comparisons require a fictional profile and keep added actions in the current demo tab.
 
-Suggestions remain AI estimates, and employer requirements and job availability need verification. A comparison authorization expires after 30 minutes or a server restart. If saving fails after that, run the comparison again.
+Suggestions remain AI estimates, and employer requirements and job availability need verification. A comparison authorization expires after 30 minutes. The stable ACTION_SIGNING_SECRET configured on Netlify survives restarts; local servers without it use a temporary process key. If saving fails after that, run the comparison again.
 
 ## Milestone reminders and adviser review links
 
@@ -181,7 +182,7 @@ Choose an unfinished milestone and a local date/time, then save a reminder. The 
 
 For adviser review, select the title, summary, reasoning and individual milestones you wish to share. Completion status is optional. The preview displays the selected content before **Create Review Link** saves a snapshot. Links expire after seven days by default, with one-day and 30-day options. Anyone holding a link can read its snapshot. Workers can revoke active links from their guest session, and deleting the guest session removes its shares. A shared snapshot stays as it was when created.
 
-Review links use the current app origin. A localhost link works on the same computer; sharing with remote advisers requires a public deployment. Demo plans offer the existing printable report, while persistent reminders and share links use live guest plans.
+Review links use the current app origin. A localhost link works on the same computer; public review links now use https://talivoy.netlify.app. Demo plans offer the existing printable report, while persistent reminders and share links use live guest plans.
 
 Existing installations need to regenerate Prisma Client and apply the additive schema changes before starting the updated server.
 
@@ -201,7 +202,7 @@ The Evaluation page publishes submitted usefulness feedback after explicit publi
 
 ## Private adviser feedback — implemented
 
-**Status — implemented and locally verified.**
+**Status — implemented; the core live journey was manually confirmed on 22 November 2026.**
 
 Focus a saved opportunity on the Dashboard and create an adviser review link. The adviser opens the selected snapshot, enters a name and self-reported role, assesses practicality, suggests milestone changes and recommends one next step. **Send Feedback to Worker** stores those answers privately. The shared page returns a submission confirmation and displays the worker-selected snapshot.
 
@@ -211,7 +212,7 @@ Expired and revoked links reject further responses. Responses already submitted 
 
 ## Weekly check-ins — implemented
 
-**Status — implemented and locally verified.**
+**Status — implemented; the core live journey was manually confirmed on 22 November 2026.**
 
 Focus a saved opportunity and open **Check In This Week**. Record what you worked on, blockers, your total available budget and weekly hours. Saving creates a private history entry. Record task completion using the plan checkboxes so dashboard progress reflects completed milestones.
 

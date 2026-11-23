@@ -1,5 +1,8 @@
 # Deploy Talivoy on Netlify
 
+**Current status:** live at https://talivoy.netlify.app/, verified 22 November 2026.
+See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md) for completed checks and remaining acceptance work.
+
 The browser, API and cookies use one HTTPS origin. Express runs in a Netlify Function;
 saved sessions, plans, feedback, reminders, check-ins and adviser snapshots live in managed
 PostgreSQL, not the function's temporary filesystem. SQLite remains the local development database.
@@ -9,7 +12,10 @@ PostgreSQL, not the function's temporary filesystem. SQLite remains the local de
 Commit the deployment changes, then import the Talivoy GitHub repository into Netlify.
 Use the repository root as the base directory, `npm run build:netlify` as the build command
 and `client/dist` as the publish directory. The committed netlify.toml supplies these settings.
-Do not set the base directory to client or server. Reserve your final site name before testing.
+Leave both Base directory and Package directory empty: this app deploys from the repository root.
+Clear an automatically selected Package directory of client. During the first deployment, that
+setting coincided with missing production tables; clearing it and redeploying resolved the issue.
+Reserve your final site name before testing.
 
 ## 2. Configure secrets before the first successful deploy
 

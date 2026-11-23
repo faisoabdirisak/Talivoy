@@ -50,6 +50,10 @@ No automatic deployment is enabled by CI. Publishing, destructive migrations, an
 
 ## Adviser response and check-in acceptance
 
+The core live adviser and check-in journeys were manually confirmed on 22 November 2026.
+See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md). Keep the detailed checks below for
+regression testing; a manual core-flow confirmation does not mark every edge case complete.
+
 - Create a fresh link, open it in a separate browser and submit fictional adviser details. Check the submission confirmation and owner-only dashboard response.
 - Revoke or expire a link and confirm new responses are rejected. Previously submitted responses should remain visible to the worker.
 - Confirm acceptance requires worker review and adds one milestone even when retried.

@@ -1,9 +1,9 @@
-# Deployment preparation
+# Deployment and operations
 
 This repository supports a **single Express process with SQLite on persistent storage**,
 or a **Netlify API function with managed PostgreSQL**. For Netlify, follow
 [NETLIFY.md](NETLIFY.md); the SQLite instructions below apply to a conventional Node server.
-Neither configuration has been published by these workflows.
+The Netlify deployment is live at https://talivoy.netlify.app/. Core live acceptance passed on 22 November 2026; see [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md). Conventional SQLite hosting remains an alternative.
 
 ## Runtime
 
@@ -33,7 +33,7 @@ Use the same public origin for UI and API so the Strict cookie works. Existing d
 - Backups, account recovery, automatic session expiry/deletion, and service-level guarantees are not implemented.
 - Helmet's default content policy may block external Google Fonts; system font fallback is available. Review external assets before changing the policy.
 - Netlify configuration and a disposable PostgreSQL/function integration check are included in CI.
-  Public deployment, hosting billing and live browser acceptance still require setup.
+  Public deployment and core browser acceptance are complete. Continue monitoring credits, provider spending and future releases.
 
 
 ## Updating an existing installation
@@ -57,7 +57,7 @@ If `EADDRINUSE` reports port 3001, identify the listening application and stop t
 4. Confirm omitted details are absent, revoke the link and verify another read is denied.
 5. Repeat the link check on the deployed HTTPS origin with a remote reviewer.
 
-A localhost link identifies the viewer's own computer. Remote review requires a reachable deployed origin. Workers choose how to send generated links. Dashboard notices require the app to be open, and calendar alerts require importing the event. Actual calendar delivery and public remote review remain acceptance checks.
+A localhost link identifies the viewer's own computer. Remote review requires a reachable deployed origin. Workers choose how to send generated links. Dashboard notices require the app to be open, and calendar alerts require importing the event. Public adviser review and feedback were manually confirmed on 22 November 2026. Actual calendar alert delivery remains an acceptance check.
 
 Job-comparison action authorizations use ACTION_SIGNING_SECRET when configured. Keep this secret
 stable across restarts (required on Netlify). Without it, conventional local servers use a

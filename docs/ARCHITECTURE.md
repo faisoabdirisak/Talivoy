@@ -72,8 +72,13 @@ The production runtime uses tsx and requires installed development dependencies.
 
 ## Boundaries of verification
 
+**22 November 2026 update:** public hosting and initial PostgreSQL save/restore are now
+verified. My manual live acceptance also covered résumé intake, adviser feedback and weekly
+check-ins. The earlier local-only descriptions below are historical; current evidence and
+remaining operational checks are in [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
+
 Vitest route tests simulate model and hosted Docling responses, and résumé tests exercise local PDF extraction. A disposable SQLite integration test verifies actual
-schema setup, persistence, ownership and deletion. Automated tests use simulated provider calls and a disposable database. Separate fictional live smoke checks verified résumé interpretation and job comparison. Public hosting and production migration verification remain pending. Coverage is a useful regression measure, not proof of correctness.
+schema setup, persistence, ownership and deletion. Automated tests use simulated provider calls and a disposable database. Separate fictional live smoke checks verified résumé interpretation and job comparison. Public hosting and initial PostgreSQL persistence verification are now complete; see LIVE_VERIFICATION.md. Coverage is a useful regression measure, not proof of correctness.
 The user has manually exercised navigation, restored progress, demo separation, and streak behavior in the local application.
 
 ## Version-1 explanation boundary
@@ -118,4 +123,9 @@ I used IBM Bob as my primary AI development assistant for the staged application
 
 ## Netlify hosting configuration
 
-The optional Netlify build bundles Express as a Node function with native /api/* and /health routes. React and API requests share the public HTTPS origin and existing guest cookies. A separate generated PostgreSQL Prisma client is injected before routes load; the local SQLite schema and client remain separate. Netlify Database applies committed SQL migrations and stores sessions and support records outside the function filesystem. ACTION_SIGNING_SECRET keeps job-comparison authorizations stable across instances. See [Netlify deployment](NETLIFY.md) for environment setup, platform limits and live acceptance checks. Cloud deployment remains pending.
+**Live:** https://talivoy.netlify.app/. Production uses shared PostgreSQL; SQLite remains local.
+Base directory and Package directory are both empty, so build and migration packaging use
+the repository root. The initial cloud deployment is complete; backup/restore and further
+redeploy persistence acceptance remain follow-up work.
+
+The optional Netlify build bundles Express as a Node function with native /api/* and /health routes. React and API requests share the public HTTPS origin and existing guest cookies. A separate generated PostgreSQL Prisma client is injected before routes load; the local SQLite schema and client remain separate. Netlify Database applies committed SQL migrations and stores sessions and support records outside the function filesystem. ACTION_SIGNING_SECRET keeps job-comparison authorizations stable across instances. See [Netlify deployment](NETLIFY.md) for environment setup, platform limits and live acceptance checks. Cloud deployment and core live acceptance are complete; see LIVE_VERIFICATION.md.

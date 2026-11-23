@@ -235,7 +235,12 @@ Vitest unit + integration tests, CodeQL scanning, GitHub Actions CI pipeline, de
 
 ---
 
-### ST-5 — Quality, Security & CI/CD [x] implemented and locally verified
+### ST-5 — Quality, Security & CI/CD [x] implemented; public deployment verified
+
+**22 November 2026 update:** Netlify hosting, managed PostgreSQL and core live worker/adviser
+acceptance are complete. The verification figures and pre-deployment limitations in the
+6 November record below are historical. Current evidence and remaining work are in
+[docs/LIVE_VERIFICATION.md](docs/LIVE_VERIFICATION.md).
 
 **Intent:** Complete code-quality checks, measured server coverage, a documented route review, deployment preparation, and project documentation.
 
@@ -246,7 +251,7 @@ Vitest unit + integration tests, CodeQL scanning, GitHub Actions CI pipeline, de
 - [x] Existing mocked analysis tests and new SDK, async error, cross-origin, demo-token, and persistence regression tests.
 - [x] Route-by-route review recorded in `docs/SECURITY.md`, including remaining operational limitations.
 - [x] Safe JSON errors, limited request bodies, guest ownership, cross-origin mutation checks, API no-store headers, and HTTP/HTTPS-only generated resource links.
-- [x] Single-process production start command and built frontend serving verified locally. No cloud deployment is claimed.
+- [x] Single-process production start command and built frontend serving verified locally. Public Netlify deployment is now verified; see the 22 November live acceptance record.
 - [x] `README.md`, `docs/ARCHITECTURE.md`, `docs/API.md`, `docs/CONTRIBUTING.md`, and `docs/DEPLOYMENT.md` added.
 
 **Todo List:**
@@ -270,12 +275,12 @@ Vitest unit + integration tests, CodeQL scanning, GitHub Actions CI pipeline, de
 - Local verification does not replace the new GitHub run after these files are pushed.
 
 **Limitations and follow-up (not claimed complete):**
-- No public hosting deployment, accounts, cross-device access, retention cleanup, or production backup/migration operations.
+- Public hosting and initial schema deployment are complete. Accounts, cross-device access, retention cleanup and a verified production backup/restore procedure remain pending.
 - Raw profile fields are not persisted. Cost/risk estimates and scoring inputs were added for new analyses in Improvement 1; older saved results remain unchanged.
 - AI reasoning and fit signals remain unverified estimates; a fit score is not a probability of success.
 - Deployment-specific proxy trust, shared rate limiting, provider spend controls/timeouts, and real user evaluation remain follow-up work.
 
-**Status:** [x] ST-5 implementation complete locally; review, commit, push, rerun GitHub Actions, and repeat the browser acceptance checks before release.
+**Status:** [x] ST-5 implementation and public deployment complete; core live acceptance confirmed 22 November 2026. Review current GitHub checks and repeat regression checks for future releases.
 
 ---
 
@@ -329,7 +334,7 @@ Explanation visual polish: gradient overview and fit ring, icon-led estimate car
 | Public evaluation | Publication-consented live/demo feedback with self-reported reviewer information. | Stored independently of guest sessions. |
 | Job comparison | Quoted matches, requirements to check and a reviewed additional Week 4 milestone. | Live fictional comparison and ownership/retry tests passed. |
 | Reminders | Guest-owned dates, dashboard notices and ICS export. | Persistence/format checked; actual calendar alerts need acceptance. |
-| Adviser links | Field selection, preview, expiry, public snapshot read and guest revocation. | SQLite isolation/disclosure/expiry/revocation checked; public remote testing remains pending. |
+| Adviser links | Field selection, preview, expiry, public snapshot read and guest revocation. | SQLite isolation/disclosure/expiry/revocation checked; the live adviser review-link and feedback journey was manually confirmed on 22 November 2026. |
 | Private adviser feedback | Adviser response form, private dashboard replies, worker confirmation and addition of a next step. | Implemented and locally verified, including ownership, expiry, revocation and retry checks. |
 | Weekly check-ins | Private progress/blocker history and reviewed time/budget guidance for unfinished milestones. | Implemented and locally verified, including stale-preview checks and completed-progress preservation. |
 | My U.S. Career Pathway | Source-linked questions, private checklist notes and statuses, and reviewed Week 4 actions for Illinois/Minnesota nursing and software pathways. | Implemented and locally verified; scope and worker review are explained on the About page. |
@@ -337,7 +342,11 @@ Explanation visual polish: gradient overview and fit ring, icon-led estimate car
 
 Recorded implementation checks covered 26 shared, 94 server and 51 client tests across package runs and the corrected targeted client rerun. Lint, type checking and production build passed. Server coverage at that check was 92.71% statements, 87.66% branches, 98.80% functions and 93.62% lines. A new GitHub Actions run remains a release check after pushing.
 
-## Adviser feedback and weekly check-ins — implemented locally
+## Adviser feedback and weekly check-ins — implemented; core live journeys confirmed
+
+I confirmed the public adviser review-link/feedback journey and weekly check-in save, reload
+and reviewed adjustments on 22 November 2026. The local implementation evidence below
+remains applicable; it does not replace independent user usefulness evaluation.
 
 ### Private adviser feedback on a shared plan
 
@@ -367,6 +376,9 @@ Implemented check-in schemas, owner-scoped routes, retry-safe saving, history, r
 
 ## Documentation map
 
+- `docs/LIVE_VERIFICATION.md` records the public deployment, live acceptance evidence, resolved deployment blockers and remaining release checks.
+- `docs/NETLIFY.md` records the production build, environment settings, PostgreSQL migrations and hosting limits.
+
 - `README.md` explains journeys, IBM tools, setup, implemented functionality and remaining deployment checks.
 - `docs/ARCHITECTURE.md` explains ownership, models, providers, reminders and sharing.
 - `docs/API.md` records implemented routes, limits and responses.
@@ -379,7 +391,7 @@ Implemented check-in schemas, owner-scoped routes, retry-safe saving, history, r
 
 Real SQLite integration checks cover response privacy, expired/revoked submission rejection, retained responses after revocation, repeat-safe acceptance, check-in save retries, stale previews, application retries and completion preservation. Frontend checks exercise deliberate adviser submission and worker approval.
 
-The development database was backed up before adding the tables and regenerating Prisma Client. Public remote deployment and independent user acceptance remain pending.
+The development database was backed up before adding the tables and regenerating Prisma Client. Public deployment and my core functional acceptance are now complete. Independent worker/adviser usefulness evaluation remains pending.
 
 
 Verification for this update passed 176 tests (26 shared, 96 server, 54 client), lint, type checking and the production build. Server coverage passed with 93.12% statements, 87.72% branches, 98.94% functions and 94.19% lines. Vite reported its bundle-size advisory for the approximately 510 kB main JavaScript chunk. Production performance and remote browser acceptance remain follow-up checks.
@@ -434,3 +446,28 @@ The About page now presents the implemented pathway workflow in three cards and 
 - [x] Explain that screenshot task counters and repository messages are historical capture-time context.
 
 I used Bob as my primary AI development assistant. The gallery supports this account alongside the source, Git history, tests and CI results. It preserves the distinction between recorded development work and current implementation verification.
+
+## Public deployment and live acceptance — completed 22 November 2026
+
+- [x] Publish Talivoy at https://talivoy.netlify.app/ with HTTPS.
+- [x] Configure server-side IBM credentials and a stable action-signing secret.
+- [x] Enable managed PostgreSQL and deploy the app tables from the repository-root configuration.
+- [x] Fix Netlify function startup and verify a real PDF upload.
+- [x] Validate schema-constrained Granite recommendations before saving.
+- [x] Verify three opportunities with twelve plan items each using a fictional live profile.
+- [x] Verify saved selection and completed plan items restore through the public API.
+- [x] Confirm my live résumé-to-recommendation-to-saved-progress journey.
+- [x] Confirm my live adviser review link, submitted response and worker retrieval.
+- [x] Confirm my weekly check-in save/reload and reviewed adjustment workflow.
+- [x] Update README, deployment instructions and the architecture/security verification record.
+- [ ] Verify another production redeploy preserves an existing guest session.
+- [ ] Rehearse a production backup/restore procedure.
+- [ ] Gather independent, consented worker/adviser usefulness feedback.
+- [ ] Finish the remaining deployed-feature checks and submission walkthrough.
+
+Latest recorded test counts: 28 shared, 102 server and 56 client (186 total), plus the separate
+Netlify/PDF/PostgreSQL integration command. The latest server coverage gate passed at
+93.56% statements, 87.16% branches, 99.01% functions and 94.85% lines. Historical stage
+counts above are preserved. See [the live verification record](docs/LIVE_VERIFICATION.md)
+for the evidence source and limits of each claim. Earlier statements that public deployment
+or core worker/adviser browser acceptance remain pending are superseded by this record.

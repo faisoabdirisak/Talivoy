@@ -1,5 +1,14 @@
 # Route security review
 
+## Live deployment verification — 22 November 2026
+
+The public HTTPS deployment uses PostgreSQL and a Secure guest cookie. Live smoke checks
+confirmed saved selection and completed-task restoration. My manual acceptance confirmed
+the adviser feedback and weekly check-in journeys. See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
+The detailed isolation, expiry and revocation claims below are supported by local regression
+tests; the live checks do not constitute an independent penetration test or comprehensive audit.
+Per-instance rate limits, guest recovery and retention limitations remain unchanged.
+
 The initial ST-5 review was recorded on 6 November 2026. This document was extended on 18 November 2026 with recent feature controls and regression evidence.
 
 ## Route-by-route result
