@@ -14,6 +14,9 @@ import { computeFeasibilityScore, assignRanks } from '../lib/scoring.js';
 import { buildAnalyzePrompt } from '../prompts/analyze.js';
 import { prisma } from '../lib/db.js';
 import { setSessionCookie } from '../lib/session.js';
+import { z } from 'zod';
+
+const responseSchema = z.toJSONSchema(RawAIResponseSchema, { target: 'draft-7', io: 'input' });
 
 type SessionWithRelations = Prisma.SessionGetPayload<{
   include: { opportunities: { include: { planItems: { include: { progressEntry: true } } } } };
@@ -38,7 +41,7 @@ analyzeRouter.post('/', async (req, res) => {
   try {
     const provider = process.env.AI_PROVIDER || 'gemini';
     const prompt = buildAnalyzePrompt(profile);
-    if (provider === 'granite') rawText = await generateGraniteContent(prompt);
+    if (provider === 'granite') rawText = await generateGraniteContent(prompt, { responseSchema });
     else if (provider === 'gemini') rawText = await generateContent(prompt);
     else throw new Error('Unknown AI provider');
   } catch (err) {
@@ -52,6 +55,7 @@ analyzeRouter.post('/', async (req, res) => {
 
   // 3. Extract JSON from the response (strip any accidental code fences)
   const jsonText = rawText
+    .trim()
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/```\s*$/i, '')
     .trim();
@@ -65,6 +69,10 @@ analyzeRouter.post('/', async (req, res) => {
   }
 
   if (!parsed2.success) {
+    // Field paths and validation codes only: never log profiles or model output.
+    console.warn('[analyze] AI response validation failed', parsed2.error.issues.map((issue) => ({
+      path: issue.path.join('.'), code: issue.code,
+    })));
     res.status(502).json({ error: 'AI response did not match expected format. Please try again.' });
     return;
   }

@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
+// These tests exercise plan validation; rate limiting is verified separately.
+vi.mock('express-rate-limit', () => ({ rateLimit: () => (_req: unknown, _res: unknown, next: () => void) => next() }));
 
 // ── Mock Gemini and Prisma BEFORE importing the app ───────────────────────────
 vi.mock('../lib/gemini.js', () => ({
@@ -48,6 +50,7 @@ vi.mock('../lib/db.js', () => {
 });
 
 import { generateContent } from '../lib/gemini.js';
+import { prisma } from '../lib/db.js';
 import app from '../index.js';
 
 const VALID_PROFILE = {
@@ -204,6 +207,22 @@ describe('POST /api/analyze', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.opportunities).toHaveLength(3);
+  });
+
+  it('accepts code fences surrounded by whitespace', async () => {
+    vi.mocked(generateContent).mockResolvedValue('  \n```json\n' + JSON.stringify(MOCK_AI_RESPONSE) + '\n```\n ');
+    expect((await request(app).post('/api/analyze').send(VALID_PROFILE)).status).toBe(200);
+  });
+
+  it('rejects incomplete plans without saving partial results or returning model data', async () => {
+    const incomplete = structuredClone(MOCK_AI_RESPONSE);
+    incomplete.opportunities[0].planItems.pop();
+    vi.mocked(prisma.session.create).mockClear();
+    vi.mocked(generateContent).mockResolvedValue(JSON.stringify(incomplete));
+    const res = await request(app).post('/api/analyze').send(VALID_PROFILE);
+    expect(res.status).toBe(502);
+    expect(prisma.session.create).not.toHaveBeenCalled();
+    expect(res.body).toEqual({ error: 'AI response did not match expected format. Please try again.' });
   });
 });
 

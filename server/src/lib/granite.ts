@@ -37,7 +37,10 @@ async function getToken(key: string) {
   return token.access_token;
 }
 
-export async function generateGraniteContent(prompt: string): Promise<string> {
+export async function generateGraniteContent(
+  prompt: string,
+  options: { responseSchema?: Record<string, unknown> } = {},
+): Promise<string> {
   const key = process.env.WATSONX_API_KEY?.trim();
   const project = process.env.WATSONX_PROJECT_ID?.trim();
   if (!key || !project) throw new Error('watsonx.ai credentials are missing');
@@ -60,9 +63,11 @@ export async function generateGraniteContent(prompt: string): Promise<string> {
       model_id: process.env.WATSONX_MODEL || 'ibm/granite-4-h-small',
       project_id: project,
       messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
+      response_format: options.responseSchema
+        ? { type: 'json_schema', json_schema: { name: 'career_opportunities', schema: options.responseSchema, strict: true } }
+        : { type: 'json_object' },
       temperature: 0.3,
-      max_tokens: 4096,
+      max_tokens: options.responseSchema ? 6144 : 4096,
     }),
     signal: AbortSignal.timeout(process.env.TALIVOY_NETLIFY === 'true' ? 32_000 : 75_000),
     redirect: 'error',

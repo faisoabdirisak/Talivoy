@@ -29,6 +29,11 @@ Only VITE_RESUME_MAX_MB is a public browser setting; API credentials must never 
 | DOCLING_SERVICE_URL | Your hosted Docling service URL, if enabled |
 | DOCLING_SERVICE_API_KEY | Your Docling key, if enabled |
 
+Mark WATSONX_API_KEY, ACTION_SIGNING_SECRET and any Docling API key as secret values.
+Keep AI_PROVIDER, WATSONX_URL, WATSONX_MODEL, CLIENT_ORIGIN and DOCLING_ENABLED unmarked:
+these are public configuration, and marking them secret causes false-positive deployment scans.
+WATSONX_PROJECT_ID can remain secret. Do not disable secret scanning.
+
 Generate the signing secret locally, then paste its output only into Netlify's secret field:
 
 ```powershell
@@ -106,3 +111,10 @@ References: [Express on Netlify](https://docs.netlify.com/build/frameworks/frame
 [Netlify Database](https://docs.netlify.com/build/data-and-storage/netlify-database/),
 [migrations](https://docs.netlify.com/build/data-and-storage/netlify-database/migrations/),
 and [function limits](https://docs.netlify.com/build/functions/configuration/).
+
+## Recommendation validation
+
+Granite recommendation requests use JSON-schema constrained output for three opportunities
+with twelve tasks each and a larger output-token allowance. Server-side Zod validation still
+rejects malformed or incomplete plans before any database write. Rejection logs include field
+paths and validation codes only, never worker profiles or generated recommendation text.
