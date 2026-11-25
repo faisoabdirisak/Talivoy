@@ -1,4 +1,5 @@
 import { workerSupportRouter } from './routes/workerSupport.js';
+import { skillsEvidenceRouter } from './routes/skillsEvidence.js';
 import { jobComparisonRouter } from './routes/jobComparison.js';
 import { resumeRouter } from './routes/resume.js';
 import { evaluationsRouter } from './routes/evaluations.js';
@@ -66,6 +67,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/api/support', workerSupportRouter);
+app.use('/api/skills-evidence', skillsEvidenceRouter);
 app.use('/api/resume', resumeRouter);
 app.use('/api/job-comparison', jobComparisonRouter);
 app.use('/api/evaluations', evaluationsRouter);

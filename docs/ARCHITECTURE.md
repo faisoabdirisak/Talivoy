@@ -121,6 +121,19 @@ The dashboard restores owned saved entries, shows the latest saved combination a
 I used IBM Bob as my primary AI development assistant for the staged application build. The [evidence gallery](IBM_BOB_EVIDENCE.md) links the original screenshots of planning, persistence tasks, the Bob workspace and its Agent/Plan controls. The images document development context. The implementation descriptions and automated checks in this guide describe current behavior.
 
 
+## Career-option comparison
+
+OpportunityComparison renders all saved opportunities and uses pure client-side helpers for
+single-factor preference cues. Cost and launch speed use existing explanation fields; null costs
+remain unknown, zero remains zero, and tied values receive tied highlights. Physical-demand cues
+use explicit worker ratings only. Weekly-effort estimates are entered separately from launch days.
+Notes and assessment inputs are temporary React state keyed by opportunity identity; they clear
+when the results component unmounts and are not persisted or sent to a provider. Source links reuse
+getPathwaySteps only after state/career selection. Choosing an option calls the existing session
+selection action, while opening its plan reuses PlanView. Demo behavior stays in useSession's
+separate state. No server schema or API route was added. Local checks passed on 25 November 2026;
+this feature's public deployment acceptance remains pending.
+
 ## Netlify hosting configuration
 
 **Live:** https://talivoy.netlify.app/. Production uses shared PostgreSQL; SQLite remains local.
@@ -129,3 +142,11 @@ the repository root. The initial cloud deployment is complete; backup/restore an
 redeploy persistence acceptance remain follow-up work.
 
 The optional Netlify build bundles Express as a Node function with native /api/* and /health routes. React and API requests share the public HTTPS origin and existing guest cookies. A separate generated PostgreSQL Prisma client is injected before routes load; the local SQLite schema and client remain separate. Netlify Database applies committed SQL migrations and stores sessions and support records outside the function filesystem. ACTION_SIGNING_SECRET keeps job-comparison authorizations stable across instances. See [Netlify deployment](NETLIFY.md) for environment setup, platform limits and live acceptance checks. Cloud deployment and core live acceptance are complete; see LIVE_VERIFICATION.md.
+
+## Skills evidence and worker review
+
+SkillEvidence belongs to Opportunity with cascade deletion. It stores skill, source, example, status, next step and optional worker-reviewed résumé wording. All operations are scoped to the guest cookie. Revision fingerprints reject stale saves/deletes. No account or public evidence directory is added.
+
+The focused dashboard reloads live records; demo records exist only in component state. Template drafting reuses an example. Optional AI rephrasing sends only the selected saved skill/source/example after explicit UI consent, returns an unsaved draft and never independently verifies claims. Source edits clear approval; shared/server validation requires confirmation before wording persistence.
+
+PDF and link selectors default to no evidence. Shared projections omit private IDs and unapproved drafts. Immutable snapshots retain selected copies after edits/deletion; revocation stops later access. PostgreSQL deploys use additive migration 0002; local SQLite was backed up before updating.

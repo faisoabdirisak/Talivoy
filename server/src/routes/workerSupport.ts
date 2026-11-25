@@ -198,7 +198,17 @@ workerSupportRouter.post(
         input.taskIds.some((id) => !opportunity.planItems.some((item) => item.id === id))
       )
         return null;
+      const evidenceIds = [...new Set(input.evidenceIds ?? [])];
+      const evidence = evidenceIds.length ? await tx.skillEvidence.findMany({
+        where: { id: { in: evidenceIds }, opportunityId: opportunity.id }, orderBy: { createdAt: 'asc' },
+      }) : [];
+      if (evidence.length !== evidenceIds.length) return null;
       const snapshot = {
+        ...(evidenceIds.length ? { skillsEvidence: evidence.map((item) => ({
+          skill: item.skill, source: item.source, evidence: item.evidence, status: item.status,
+          nextStep: item.nextStep, selfReported: true,
+          ...(item.bullet && item.bulletReviewedAt ? { bullet: item.bullet } : {}),
+        })) } : {}),
         ...(input.includeTitle ? { title: opportunity.title } : {}),
         ...(input.includeSummary ? { summary: opportunity.summary } : {}),
         ...(input.includeReasoning ? { reasoning: opportunity.reasoning } : {}),

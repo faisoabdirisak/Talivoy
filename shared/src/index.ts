@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export * from './skillsEvidence.js';
 import { OpportunityExplanationSchema, ScoringSignalsSchema } from './explanation.js';
 
 // AI-generated links are untrusted. Allow web resources only.

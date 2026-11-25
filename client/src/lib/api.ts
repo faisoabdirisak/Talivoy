@@ -206,3 +206,9 @@ export const savePathwayItem = (input: PathwayItemInput) =>
   apiFetch<CareerPathwayItem>('/api/support/pathway-items', { method: 'POST', body: JSON.stringify(input) });
 export const addPathwayAction = (id: string) =>
   apiFetch<PlanItem>('/api/support/pathway-items/' + encodeURIComponent(id) + '/action', { method: 'POST', body: '{}' });
+
+import type { SkillEvidence, SkillEvidenceInput } from '@talivoy/shared';
+export const listSkillsEvidence = (opportunityId: string) => apiFetch<SkillEvidence[]>('/api/skills-evidence?opportunityId=' + encodeURIComponent(opportunityId), { method: 'GET' });
+export const saveSkillsEvidence = (input: SkillEvidenceInput, id?: string) => apiFetch<SkillEvidence>('/api/skills-evidence' + (id ? '/' + encodeURIComponent(id) : ''), { method: id ? 'PUT' : 'POST', body: JSON.stringify(input) });
+export const suggestSkillsWording = (id: string, mode: 'template' | 'ai') => apiFetch<{ bullet: string; item: SkillEvidence; source: 'template' | 'ai'; requiresConfirmation: boolean }>('/api/skills-evidence/' + encodeURIComponent(id) + '/suggest', { method: 'POST', body: JSON.stringify({ mode }) });
+export const deleteSkillsEvidence = (item: SkillEvidence) => apiFetch<void>('/api/skills-evidence/' + encodeURIComponent(item.id), { method: 'DELETE', body: JSON.stringify({ revision: item.revision }) });

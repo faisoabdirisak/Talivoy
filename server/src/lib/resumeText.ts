@@ -1,6 +1,5 @@
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import mammoth from 'mammoth';
 
 export async function extractResumeText(file: Buffer, extension: 'pdf' | 'docx') {
@@ -13,7 +12,7 @@ export async function extractResumeText(file: Buffer, extension: 'pdf' | 'docx')
   const require = createRequire(import.meta.url);
   const packageRoot = dirname(require.resolve('pdfjs-dist/package.json'));
   const task = getDocument({
-    standardFontDataUrl: pathToFileURL(join(packageRoot, 'standard_fonts')).href + '/',
+    standardFontDataUrl: join(packageRoot, 'standard_fonts') + '/',
     data: new Uint8Array(file),
     disableFontFace: true,
     useSystemFonts: false,

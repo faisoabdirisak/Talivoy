@@ -2,8 +2,15 @@ import { Brand } from './Brand';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Printer, X } from 'lucide-react';
-import { calculateScoreBreakdown, type Opportunity } from '@talivoy/shared';
-import { restoreSession } from '../lib/api';
+import {
+  calculateScoreBreakdown,
+  evidenceForSharing,
+  type SkillEvidence,
+  type SharedSkillEvidence,
+  type Opportunity,
+} from '@talivoy/shared';
+import { restoreSession, listSkillsEvidence } from '../lib/api';
+import { SkillsEvidenceSummary } from './SkillsEvidenceSummary';
 import './adviserHandoff.css';
 
 const categories = {
@@ -18,6 +25,8 @@ export function AdviserHandoff({ opportunity, demo }: { opportunity: Opportunity
   const [report, setReport] = useState<Opportunity | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [evidence, setEvidence] = useState<SkillEvidence[]>([]);
+  const [evidenceIds, setEvidenceIds] = useState<string[]>([]);
 
   async function preview() {
     setLoading(true);
@@ -35,6 +44,8 @@ export function AdviserHandoff({ opportunity, demo }: { opportunity: Opportunity
         return;
       }
       setReport(saved);
+      setEvidence(demo ? [] : await listSkillsEvidence(opportunity.id));
+      setEvidenceIds([]);
       dialog.current?.showModal();
     } catch {
       setError('Could not load saved progress. Please try again.');
@@ -71,6 +82,29 @@ export function AdviserHandoff({ opportunity, demo }: { opportunity: Opportunity
           }}
         >
           <div className="handoff-toolbar">
+            {evidence.length > 0 && (
+              <fieldset className="space-y-2 text-sm">
+                <legend className="font-semibold">
+                  Choose skills evidence for this report (optional)
+                </legend>
+                {evidence.map((item) => (
+                  <label key={item.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={evidenceIds.includes(item.id)}
+                      onChange={(event) =>
+                        setEvidenceIds((ids) =>
+                          event.target.checked
+                            ? [...ids, item.id]
+                            : ids.filter((id) => id !== item.id)
+                        )
+                      }
+                    />
+                    {item.skill} · Self-reported
+                  </label>
+                ))}
+              </fieldset>
+            )}
             <button
               type="button"
               onClick={() => dialog.current?.close()}
@@ -87,7 +121,15 @@ export function AdviserHandoff({ opportunity, demo }: { opportunity: Opportunity
               <Printer size={16} aria-hidden="true" /> Print / Save as PDF
             </button>
           </div>
-          {report && <TransitionReport opportunity={report} demo={demo} />}
+          {report && (
+            <TransitionReport
+              opportunity={report}
+              demo={demo}
+              evidence={evidence
+                .filter((item) => evidenceIds.includes(item.id))
+                .map(evidenceForSharing)}
+            />
+          )}
         </dialog>,
         document.body
       )}
@@ -95,7 +137,15 @@ export function AdviserHandoff({ opportunity, demo }: { opportunity: Opportunity
   );
 }
 
-function TransitionReport({ opportunity, demo }: { opportunity: Opportunity; demo: boolean }) {
+function TransitionReport({
+  opportunity,
+  demo,
+  evidence = [],
+}: {
+  opportunity: Opportunity;
+  demo: boolean;
+  evidence?: SharedSkillEvidence[];
+}) {
   const { explanation, planItems } = opportunity;
   const breakdown = explanation && calculateScoreBreakdown(explanation.signals);
   const completed = planItems.filter((item) => item.isCompleted).length;
@@ -122,6 +172,8 @@ function TransitionReport({ opportunity, demo }: { opportunity: Opportunity; dem
             : 'AI-generated recommendation · Estimates and assumptions need independent verification.'}
         </p>
       </header>
+
+      <SkillsEvidenceSummary items={evidence} />
 
       <section>
         <h2>Why this fits</h2>

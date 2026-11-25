@@ -79,3 +79,9 @@ These features use the existing saved guest session. Losing the guest cookie als
 This update adds CareerPathwayItem. Back up SQLite, stop the backend and run the existing db:push command before starting the updated server. The local database was backed up and the additive table was applied during implementation.
 
 Test both supported roles and states, a saved checklist after refresh, a reviewed action save and selection of that action for adviser sharing. Confirm source links reach the named authorities and local career resources. Review the catalog when requirements or source locations change. Public deployment does not expand the catalog beyond its displayed coverage.
+
+## Skills evidence schema update
+
+Deploy the matching API/client with additive PostgreSQL migration **netlify/database/migrations/0002_skills_evidence.sql**. Keep deployed 0001 unchanged. Then verify evidence creation, restore after refresh, wording confirmation and selective sharing in production. Local checks do not certify the deployed site.
+
+Back up local SQLite before npm run db:push --workspace=server. This workspace's database was backed up under ignored .netlify/backups before the local schema update. Never commit database files, backups or credentials.

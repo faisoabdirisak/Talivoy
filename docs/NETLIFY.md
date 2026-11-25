@@ -124,3 +124,7 @@ Granite recommendation requests use JSON-schema constrained output for three opp
 with twelve tasks each and a larger output-token allowance. Server-side Zod validation still
 rejects malformed or incomplete plans before any database write. Rejection logs include field
 paths and validation codes only, never worker profiles or generated recommendation text.
+
+## My Skills Evidence rollout
+
+Apply **0002_skills_evidence.sql** with the matching API/client deployment. It creates SkillEvidence and its Opportunity foreign key; do not edit 0001_initial.sql. Disposable PostgreSQL checks cover creation, ownership, idempotent migrations and retrieval from a second connection. After deploying, verify refresh persistence, wording approval and selective exports. No production deployment was performed for this local implementation.

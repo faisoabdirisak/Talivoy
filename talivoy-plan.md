@@ -471,3 +471,34 @@ Netlify/PDF/PostgreSQL integration command. The latest server coverage gate pass
 counts above are preserved. See [the live verification record](docs/LIVE_VERIFICATION.md)
 for the evidence source and limits of each claim. Earlier statements that public deployment
 or core worker/adviser browser acceptance remain pending are superseded by this record.
+
+## Compare My Career Options — local implementation, 25 November 2026
+
+- [x] Extend the existing two-option comparison to show all recommendations in a responsive modal.
+- [x] Add Back/Close controls and preference buttons for cost, transition speed and physical demands.
+- [x] Explain highlights using saved estimates, handle ties and disclose unknown values.
+- [x] Preserve saved fit scores, completed tasks and selected opportunity until deliberate selection.
+- [x] Show skill-fit reasoning, early plan steps, estimated costs, risks and the first unfinished milestone.
+- [x] Add temporary worker-reviewed skills, training, weekly-effort and physical-demand inputs.
+- [x] Compare entered weekly effort with available time without deriving effort from launch days.
+- [x] Reuse entry-source catalogs only after explicit state/career selection; preserve source review dates.
+- [x] Reuse guest-owned plan selection and retain demo isolation without new AI calls or schema changes.
+- [x] Verify missing/zero costs, ties, unchanged data, preference feedback, weekly time and source display in client tests.
+- [x] Check the local modal and cost highlighting in the browser; pass type checking, lint and client build.
+- [ ] Publish this update and repeat live desktop/mobile and plan-selection acceptance.
+
+Client checks now cover 60 tests. Comparison notes are explicitly temporary and are not sent to AI
+or stored in the database. Physical demands, skills gaps and qualification requirements are not
+invented when unavailable. Existing pathway coverage remains limited to the documented roles/states.
+
+## 25 November 2026 — My Skills Evidence (implemented locally)
+
+- [x] Private evidence per opportunity from work, education, volunteering or personal projects.
+- [x] Self-reported evidence/development statuses, examples and next steps.
+- [x] Template and optional consent-based AI rephrasing; explicit wording approval.
+- [x] Unchecked evidence selection for printable adviser reports and expiring snapshots.
+- [x] Guest ownership, stale-edit protection, validation, deletion cascade and temporary demo mode.
+- [x] Additive PostgreSQL migration 0002 and backed-up local SQLite schema update.
+- [ ] Deploy application/migration and verify the live workflow.
+
+Worker confirmation does not independently verify skills or qualifications. Shared snapshots retain selected copies; revoke links to stop future access. Existing career comparison and completed plans are preserved.

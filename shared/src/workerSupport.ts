@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SharedSkillEvidenceSchema } from './skillsEvidence.js';
 
 export const ReminderInputSchema = z.object({
   planItemId: z.string().min(1).max(200),
@@ -12,6 +13,7 @@ export const AdviserShareInputSchema = z
     includeReasoning: z.boolean(),
     includeProgress: z.boolean(),
     taskIds: z.array(z.string().min(1).max(200)).max(50),
+    evidenceIds: z.array(z.string().min(1).max(200)).max(30).optional(),
     expiresInDays: z.union([z.literal(1), z.literal(7), z.literal(30)]).default(7),
   })
   .refine(
@@ -19,10 +21,12 @@ export const AdviserShareInputSchema = z
       value.includeTitle ||
       value.includeSummary ||
       value.includeReasoning ||
+      Boolean(value.evidenceIds?.length) ||
       value.taskIds.length > 0
   );
 
 export const AdviserSnapshotSchema = z.object({
+  skillsEvidence: z.array(SharedSkillEvidenceSchema).optional(),
   title: z.string().optional(),
   summary: z.string().optional(),
   reasoning: z.string().optional(),

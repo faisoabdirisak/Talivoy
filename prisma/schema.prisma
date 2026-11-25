@@ -40,6 +40,7 @@ model Opportunity {
   adviserFeedback  AdviserFeedback[]
   weeklyCheckIns   WeeklyCheckIn[]
   pathwayItems     CareerPathwayItem[]
+  skillsEvidence   SkillEvidence[]
 }
 
 model PlanItem {
@@ -150,4 +151,21 @@ model CareerPathwayItem {
   planItem       PlanItem? @relation(fields: [planItemId], references: [id], onDelete: SetNull)
 
   @@unique([opportunityId, state, career, stepKey])
+}
+
+model SkillEvidence {
+  id                String @id @default(cuid())
+  opportunityId     String
+  opportunity       Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  skill             String
+  source            String
+  evidence          String
+  status            String
+  nextStep          String
+  bullet            String?
+  bulletReviewedAt  DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([opportunityId])
 }

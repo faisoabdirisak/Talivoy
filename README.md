@@ -57,6 +57,7 @@ The [IBM Bob evidence gallery](docs/IBM_BOB_EVIDENCE.md) includes all five image
 - Submit a fictional or non-sensitive profile to generate three ranked opportunities.
 - Explore career pivots, upskilling, and micro-business ideas with 12 action items over 30 days.
 - Open Explain My Opportunity in a full-screen popup for weighted score factors, estimated cost, risks, assumptions, and verification questions.
+- Compare all career options with preference highlights, budget/time checks, worker-reviewed skills and physical demands, and matching pathway sources.
 - Save recommendations, an opportunity selection, and task progress in a browser-specific guest session.
 - View dashboard completion and a UTC-calendar-day activity streak.
 - Try Maria, James, and Aisha's fictional demo profiles without a live recommendation request.
@@ -164,6 +165,25 @@ These conventional-server commands remain available for SQLite hosting. The publ
 - The public deployment uses shared PostgreSQL storage. SQLite hosting requires one persistent instance. API rate-limit counters remain per instance.
 - The separate `gemini-test` folder is outside this application and must not be included in its repository.
 
+## Compare My Career Options — added 25 November 2026
+
+On Opportunities, open **Compare My Career Options** to review all recommendations in a modal
+with Back/Close controls. Lower cost and faster transition highlight the lowest known saved
+cost or launch estimate, including ties and missing-data notices. Less physical work uses only
+physical-demand ratings I enter after reviewing duties; the app does not infer demands from titles.
+Fit scores, completed tasks and the focused plan remain unchanged until I deliberately choose a plan.
+
+The cards show skill-fit reasoning, early plan steps to investigate, unverified cost, launch time,
+the next unfinished milestone and risks. I can enter skills/training notes and an estimated weekly
+effort to compare with my available hours. Weekly effort is never inferred from launch days.
+State and matching-career selectors reuse the Illinois/Minnesota nursing/software pathway catalog;
+other roles require further research. Source review dates are preserved and current rules need checking.
+
+Comparison notes and preference inputs are temporary and clear when leaving the results or refreshing.
+Choosing a live plan uses the existing saved selection route; demo choices remain isolated in demo state.
+This feature makes no new AI requests and needs no database migration. Local implementation and
+tests are complete; production deployment and live acceptance for this update remain pending.
+
 ## Compare your skills with a job posting
 
 On the Dashboard, choose **Focus** on an opportunity, then open **Compare a job**. Review your skills, role, experience and qualifications and paste the job posting. Click **Compare My Skills** to send those details to the configured AI provider.
@@ -270,3 +290,13 @@ Talivoy combines the ideas of talent and a voyage toward the next career chapter
 The interface, adviser reports, calendar event text and package names use Talivoy. New guest sessions use talivoy_sid; the server accepts existing restart_sid cookies so saved plans remain accessible. Start over clears both names. The onboarding preference transfers to talivoy-onboarding-done. Calendar event UIDs retain their previous namespace so previously imported reminders keep their identity.
 
 The development plan is talivoy-plan.md. The local application folder is Talivoy and the GitHub repository is faisoabdirisak/Talivoy. The footer contact link opens its GitHub issues page unless a contact email is configured.
+
+## My Skills Evidence
+
+From **Dashboard**, focus an opportunity and open **Build My Skills Evidence**. Record a skill, its source (work, education, volunteering or a personal project), your example and next step. Choose **I have evidence** or **I want to develop this**. Experience from another country is welcome. Entries are self-reported, never independently verified.
+
+Live entries are private to the current browser's guest session, with up to 30 per opportunity. A development goal needs no evidence yet. Avoid sensitive personal information and confidential employer material. **Draft from my example** reuses your text without an AI call. Optional **Ask AI to rephrase** requires permission to send the selected saved skill/source/example to the configured Granite/Gemini service. Review every fact and explicitly confirm wording before saving; editing source fields clears approval.
+
+Print/PDF adviser reports and expiring adviser links have separate, unchecked evidence selections. Only chosen entries and worker-reviewed wording are included. Links contain snapshots: later edits/deletion do not erase a shared copy; revoke the link to stop future access. Demo evidence is temporary in the current dashboard view and excluded from live adviser reports.
+
+The local schema is updated. The next Netlify deployment applies additive migration **0002_skills_evidence.sql**. This feature is not live until deployed.

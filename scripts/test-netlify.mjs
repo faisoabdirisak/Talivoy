@@ -6,6 +6,7 @@ import { NetlifyDB } from '@netlify/database-dev';
 const database = new NetlifyDB({ logger: () => {} });
 try {
   process.env.NETLIFY_DB_URL = await database.start();
+  process.env.DOCLING_ENABLED = 'false'; // Keep the PDF fixture local even if Prisma discovers a .env.
   process.env.URL = 'https://talivoy-test.netlify.app';
   process.env.CLIENT_ORIGIN = process.env.URL;
   process.env.ACTION_SIGNING_SECRET = 'test-only-secret-not-a-production-credential';
@@ -68,11 +69,20 @@ try {
   const restored = JSON.parse((await invoke('/api/sessions/me', 'GET', undefined, headers)).body);
   assert.equal(restored.opportunities[0].planItems[0].isCompleted, true);
   assert.equal(restored.cookieToken, undefined);
+  const evidenceInput = { opportunityId: session.opportunities[0].id, skill: 'Inventory management', source: 'work', evidence: 'I used stock-tracking software for two years.', status: 'have-evidence', nextStep: 'Prepare a resume example' };
+  const createdEvidence = await invoke('/api/skills-evidence', 'POST', evidenceInput, headers);
+  assert.equal(createdEvidence.statusCode, 201);
+  const evidence = JSON.parse(createdEvidence.body);
+  assert.equal((await invoke('/api/skills-evidence?opportunityId=' + evidenceInput.opportunityId)).statusCode, 401);
+  await database.applyMigrations('netlify/database/migrations');
   // A new database connection sees saved work, independently of the function instance.
   const require = createRequire(import.meta.url);
   const { PrismaClient } = require('@talivoy/netlify-prisma');
   const reconnected = new PrismaClient();
-  try { assert.equal((await reconnected.progressEntry.findUnique({ where: { planItemId } })).isCompleted, true); }
+  try {
+    assert.equal((await reconnected.progressEntry.findUnique({ where: { planItemId } })).isCompleted, true);
+    assert.equal((await reconnected.skillEvidence.findUnique({ where: { id: evidence.id } })).evidence, evidenceInput.evidence);
+  }
   finally { await reconnected.$disconnect(); }
   console.log('Netlify adapter + PostgreSQL migration, ownership, progress and reconnection checks passed.');
 } finally {

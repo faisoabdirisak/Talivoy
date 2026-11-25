@@ -1,6 +1,7 @@
 import { Brand } from './Brand';
 import { AdviserResponseForm } from './AdviserResponseForm';
 import { useEffect, useState } from 'react';
+import { SkillsEvidenceSummary } from './SkillsEvidenceSummary';
 import type { AdviserSnapshot } from '@talivoy/shared';
 import { readAdviserShare } from '../lib/api';
 
@@ -75,6 +76,7 @@ export function AdviserReviewPage({ token }: { token: string }) {
                 ))}
               </section>
             )}
+            <SkillsEvidenceSummary items={review.snapshot.skillsEvidence ?? []} />
             {review.canRespond ? (
               <AdviserResponseForm key={token} token={token} />
             ) : (

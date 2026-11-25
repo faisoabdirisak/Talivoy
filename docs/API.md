@@ -156,3 +156,21 @@ State is IL or MN. Career is registered-nurse or software-developer. Status is T
 CareerPathwayItem stores the selection, status, notes, reviewedAt, updatedAt and optional planItemId. Confirmed/Completed saves record a worker-review timestamp. Returning to To check clears that timestamp. The catalog's sourceReviewed date is maintained separately from the worker timestamp.
 
 Plan actions use deterministic IDs and an empty upsert update to preserve completed progress on retries. Descriptions carry source names, URLs and review dates. Personal checklist notes are omitted from the plan action. The existing adviser snapshot flow can share a selected milestone. Opportunity deletion cascades to its checklist rows.
+
+## My Skills Evidence
+
+Routes use **/api/skills-evidence**, require the owning guest cookie and retain mutation-origin protection. Limits: 60 requests/minute per instance; AI wording has an additional 10/15-minute limit.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | /?opportunityId=... | List owned opportunity entries. |
+| POST | / | Create an entry; maximum 30 per opportunity. |
+| PUT | /:id | Replace an entry using its current revision. |
+| POST | /:id/suggest | Return an unsaved draft; mode is template or ai. |
+| DELETE | /:id | Delete with JSON body containing revision. |
+
+Create/update fields: opportunityId, skill (1–120 characters), source (work/education/volunteering/personal-project), evidence (0–1200), status (have-evidence/develop), nextStep (0–300), bullet (0–600, optional), confirmWording (default false), and revision (required on update). Have-evidence requires an example. Saving a bullet requires evidence, have-evidence status and explicit confirmation. Responses include id, bulletReviewedAt and a 64-character revision fingerprint; owner tokens are omitted.
+
+Updating without a bullet clears old wording. Missing ownership returns 404, missing cookie 401, invalid input 400 and stale edit/delete 409. Unsupported AI drafts return sanitized 502 errors. AI receives only the selected skill/source/example. Numeric additions are rejected, but worker review remains necessary.
+
+POST /api/support/adviser-shares accepts optional evidenceIds (up to 30), all owned by the selected opportunity. Its snapshot includes only selected fields, selfReported=true and approved wording, without private IDs. Empty selection omits evidence. Older snapshots remain readable. Guest deletion cascades private evidence.

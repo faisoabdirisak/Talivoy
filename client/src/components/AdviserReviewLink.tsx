@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link2, ShieldCheck, X, Copy } from 'lucide-react';
-import type { AdviserShare, AdviserShareInput, Opportunity } from '@talivoy/shared';
-import { createAdviserShare, listAdviserShares, revokeAdviserShare } from '../lib/api';
+import {
+  evidenceForSharing,
+  type SkillEvidence,
+  type AdviserShare,
+  type AdviserShareInput,
+  type Opportunity,
+} from '@talivoy/shared';
+import {
+  createAdviserShare,
+  listAdviserShares,
+  revokeAdviserShare,
+  listSkillsEvidence,
+} from '../lib/api';
+import { SkillsEvidenceSummary } from './SkillsEvidenceSummary';
 
 export function AdviserReviewLink({
   opportunity,
@@ -22,6 +34,21 @@ export function AdviserReviewLink({
   const [createdId, setCreatedId] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [evidence, setEvidence] = useState<SkillEvidence[]>([]);
+  const [evidenceIds, setEvidenceIds] = useState<string[]>([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(false);
+
+  async function loadEvidence() {
+    setEvidenceLoading(true);
+    try {
+      setEvidence(await listSkillsEvidence(opportunity.id));
+      setEvidenceIds([]);
+    } catch {
+      setMessage('Could not load evidence. Try again before selecting it.');
+    } finally {
+      setEvidenceLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (!open || demo) return;
@@ -46,6 +73,7 @@ export function AdviserReviewLink({
     includeProgress,
     taskIds,
     expiresInDays: days,
+    ...(evidenceIds.length ? { evidenceIds } : {}),
   };
   const button =
     'rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-50';
@@ -113,6 +141,30 @@ export function AdviserReviewLink({
               </p>
               <fieldset disabled={busy} className="space-y-3 text-sm text-app">
                 <legend className="mb-2 font-semibold">Include in the review</legend>
+                <button
+                  type="button"
+                  className="text-primary underline"
+                  disabled={evidenceLoading}
+                  onClick={() => void loadEvidence()}
+                >
+                  {evidenceLoading ? 'Loading evidence…' : 'Choose saved skills evidence'}
+                </button>
+                {evidence.map((item) => (
+                  <label key={item.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={evidenceIds.includes(item.id)}
+                      onChange={(event) =>
+                        setEvidenceIds((ids) =>
+                          event.target.checked
+                            ? [...ids, item.id]
+                            : ids.filter((id) => id !== item.id)
+                        )
+                      }
+                    />
+                    {item.skill} · Self-reported
+                  </label>
+                ))}
                 {(
                   [
                     ['Opportunity title', includeTitle, setTitle],
@@ -170,6 +222,11 @@ export function AdviserReviewLink({
                 {includeTitle && <p className="font-semibold">{opportunity.title}</p>}
                 {includeSummary && <p>{opportunity.summary}</p>}
                 {includeReasoning && <p>{opportunity.reasoning}</p>}
+                <SkillsEvidenceSummary
+                  items={evidence
+                    .filter((item) => evidenceIds.includes(item.id))
+                    .map(evidenceForSharing)}
+                />
                 {opportunity.planItems
                   .filter((item) => taskIds.includes(item.id))
                   .map((item) => (
@@ -186,7 +243,14 @@ export function AdviserReviewLink({
                 type="button"
                 className={button}
                 disabled={
-                  busy || !(includeTitle || includeSummary || includeReasoning || taskIds.length)
+                  busy ||
+                  !(
+                    includeTitle ||
+                    includeSummary ||
+                    includeReasoning ||
+                    taskIds.length ||
+                    evidenceIds.length
+                  )
                 }
                 onClick={() => void create()}
               >

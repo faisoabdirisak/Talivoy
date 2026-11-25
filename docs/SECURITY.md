@@ -95,3 +95,11 @@ Pathway entries are scoped through the opportunity's guest session. Shared valid
 Worker notes are private guest data. Adviser snapshots can contain selected pathway actions through the existing task-selection flow. Those actions include official resource links and review dates and omit private checklist notes. Worker-marked Confirmed/Completed statuses record personal review rather than a determination by a licensing authority.
 
 Current source checks and limited geographic/role coverage are displayed in the UI. Ongoing source review is an editorial maintenance task. Automated tests check catalog validation and the actual SQLite ownership, persistence, retry and deletion boundaries.
+
+## Skills evidence privacy
+
+Evidence is self-reported, never independently verified. Avoid sensitive identifiers, confidential employer material and private documents. Entries belong to the browser guest session; clearing cookies loses access, with no cross-device recovery added.
+
+AI rephrasing requires opt-in to send the chosen saved skill/source/example to the configured provider. Templates make no AI request. Drafts are not automatically saved/shared. Workers confirm wording before persistence; source edits clear approval. The server validates lengths, ownership and revision fingerprints, limits requests and sanitizes errors. Numeric checks cannot establish truth.
+
+Adviser reports include only checked entries and approved wording. Snapshots retain previously shared content after original edits/deletion; revoke future link access, but downloaded copies cannot be recalled. Guest deletion cascades private records. Demo entries stay temporary and excluded from live shares.

@@ -1,4 +1,5 @@
 import { USCareerPathway } from './components/USCareerPathway';
+import { MySkillsEvidence } from './components/MySkillsEvidence';
 import { PrivateAdviserFeedback } from './components/PrivateAdviserFeedback';
 import { WeeklyCheckIns } from './components/WeeklyCheckIns';
 import { MilestoneReminders } from './components/MilestoneReminders';
@@ -195,6 +196,8 @@ function AppContent() {
                       focusedId={selectedOpportunityId}
                       onFocus={selectOpp}
                       error={apiError}
+                      profile={demoActive ? undefined : lastFormValues}
+                      onViewPlan={openPlan}
                     />
                   )}
                   <OpportunityGrid
@@ -251,6 +254,7 @@ function AppContent() {
                 {opportunities.filter((item) => item.id === selectedOpportunityId).map((opportunity) => (
                   <div key={`${demoActive}-${opportunity.id}`} className="space-y-6">
                     <USCareerPathway opportunity={opportunity} profile={demoActive ? undefined : lastFormValues} demo={demoActive} onAdded={addJobAction} />
+                    <MySkillsEvidence opportunityId={opportunity.id} demo={demoActive} />
                     <WeeklyCheckIns opportunity={opportunity} demo={demoActive} onApply={applyRefinement} />
                     <PrivateAdviserFeedback opportunity={opportunity} demo={demoActive} onAdded={addJobAction} />
                     <MilestoneReminders opportunity={opportunity} demo={demoActive} />

@@ -10,6 +10,7 @@ import {
   listReminders,
   saveReminder,
   readAdviserShare,
+  listSkillsEvidence,
 } from '../lib/api';
 
 vi.mock('../lib/api', () => ({
@@ -20,6 +21,7 @@ vi.mock('../lib/api', () => ({
   saveReminder: vi.fn(),
   removeReminder: vi.fn(),
   readAdviserShare: vi.fn(),
+  listSkillsEvidence: vi.fn(),
 }));
 afterEach(() => {
   cleanup();
@@ -108,4 +110,42 @@ it('renders a shared plan without requesting the adviser guest session', async (
   expect(await screen.findByText('Shared milestone')).toBeInTheDocument();
   expect(screen.queryByText('Private summary')).not.toBeInTheDocument();
   expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+});
+
+it('keeps skills evidence unselected until the worker explicitly includes it in a share', async () => {
+  vi.mocked(listAdviserShares).mockResolvedValue([]);
+  vi.mocked(listSkillsEvidence).mockResolvedValue([
+    {
+      id: 'evidence-1',
+      opportunityId: opportunity.id,
+      skill: 'Team leadership',
+      source: 'work',
+      evidence: 'I supervised six staff.',
+      status: 'have-evidence',
+      nextStep: 'Practice an interview example',
+      bullet: 'Supervised six staff.',
+      bulletReviewedAt: '2026-11-25T12:00:00Z',
+      revision: 'a'.repeat(64),
+    },
+  ]);
+  vi.mocked(createAdviserShare).mockResolvedValue({
+    id: 'share-1',
+    token: 'a'.repeat(64),
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 86400000).toISOString(),
+  });
+  render(<AdviserReviewLink opportunity={opportunity} demo={false} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Choose details to share' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Choose saved skills evidence' }));
+  const selection = await screen.findByLabelText('Team leadership · Self-reported');
+  expect(selection).not.toBeChecked();
+  expect(screen.queryByText('I supervised six staff.')).not.toBeInTheDocument();
+  fireEvent.click(selection);
+  expect(screen.getByText('I supervised six staff.')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Create Review Link' }));
+  await waitFor(() =>
+    expect(createAdviserShare).toHaveBeenCalledWith(
+      expect.objectContaining({ evidenceIds: ['evidence-1'] })
+    )
+  );
 });

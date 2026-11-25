@@ -3,9 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, expect, it, vi } from 'vitest';
 import { createDemoOpportunities } from '@talivoy/shared';
 import { DashboardPreview } from '../components/DashboardPreview';
-import { restoreSession } from '../lib/api';
+import { restoreSession, listSkillsEvidence } from '../lib/api';
 
-vi.mock('../lib/api', () => ({ restoreSession: vi.fn() }));
+vi.mock('../lib/api', () => ({
+  restoreSession: vi.fn(),
+  listSkillsEvidence: vi.fn().mockResolvedValue([]),
+}));
 afterEach(() => {
   Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal');
   vi.restoreAllMocks();
@@ -24,6 +27,32 @@ it('prints confirmed saved progress for the focused opportunity', async () => {
     selectedOpportunityId: focused.id,
     opportunities: [saved, other],
   });
+  vi.mocked(listSkillsEvidence).mockResolvedValue([
+    {
+      id: 'e1',
+      opportunityId: focused.id,
+      skill: 'Team leadership',
+      source: 'work',
+      evidence: 'I supervised six staff.',
+      status: 'have-evidence',
+      nextStep: 'Prepare an interview example',
+      bullet: 'Supervised six staff.',
+      bulletReviewedAt: new Date().toISOString(),
+      revision: 'a'.repeat(64),
+    },
+    {
+      id: 'e2',
+      opportunityId: focused.id,
+      skill: 'Private skill',
+      source: 'education',
+      evidence: 'PRIVATE UNSELECTED EXAMPLE',
+      status: 'have-evidence',
+      nextStep: '',
+      bullet: 'Unapproved draft',
+      bulletReviewedAt: null,
+      revision: 'b'.repeat(64),
+    },
+  ]);
   Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
     configurable: true,
     value(this: HTMLDialogElement) {
@@ -47,6 +76,13 @@ it('prints confirmed saved progress for the focused opportunity', async () => {
   expect(report.getByRole('heading', { name: focused.title })).toBeVisible();
   expect(report.getByText(/1 of 12 tasks completed \(8%\) · 11 remaining/)).toBeVisible();
   expect(report.queryByRole('heading', { name: other.title })).not.toBeInTheDocument();
+  expect(report.queryByText('I supervised six staff.')).not.toBeInTheDocument();
+  await user.click(report.getByRole('checkbox', { name: 'Team leadership · Self-reported' }));
+  expect(report.getByText('I supervised six staff.')).toBeVisible();
+  expect(report.queryByText('PRIVATE UNSELECTED EXAMPLE')).not.toBeInTheDocument();
+  await user.click(report.getByRole('checkbox', { name: 'Private skill · Self-reported' }));
+  expect(report.getByText('PRIVATE UNSELECTED EXAMPLE')).toBeVisible();
+  expect(report.queryByText('Unapproved draft')).not.toBeInTheDocument();
   await user.click(report.getByRole('button', { name: 'Print / Save as PDF' }));
   expect(print).toHaveBeenCalledOnce();
 });
