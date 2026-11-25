@@ -128,3 +128,5 @@ paths and validation codes only, never worker profiles or generated recommendati
 ## My Skills Evidence rollout
 
 Apply **0002_skills_evidence.sql** with the matching API/client deployment. It creates SkillEvidence and its Opportunity foreign key; do not edit 0001_initial.sql. Disposable PostgreSQL checks cover creation, ownership, idempotent migrations and retrieval from a second connection. After deploying, verify refresh persistence, wording approval and selective exports. No production deployment was performed for this local implementation.
+
+The Netlify build explicitly regenerates the standard Prisma client before typechecking, as well as its separate PostgreSQL runtime client. Cached node_modules must not supply types from an older schema. Client generation does not alter database contents.
